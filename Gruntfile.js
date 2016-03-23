@@ -1,4 +1,4 @@
-/*globals module*/
+/*globals module, require*/
 
 module.exports = function (grunt) {
   'use strict';
@@ -31,6 +31,18 @@ module.exports = function (grunt) {
         files: {
           'dist/fl-modal-router.css': 'src/**/*.scss',
         },
+      },
+    },
+    postcss: {
+      options: {
+        processors: [
+          require('autoprefixer')({
+            browsers: ['last 2 versions']
+          })
+        ]
+      },
+      dist: {
+        src: 'dist/*.css'
       },
     },
     uglify: {
@@ -91,9 +103,10 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-open');
-  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-postcss');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
 
@@ -104,7 +117,7 @@ module.exports = function (grunt) {
 
   //Building
   grunt.registerTask('js-build', ['concat', 'uglify']);
-  grunt.registerTask('css-build', ['sass']);
+  grunt.registerTask('css-build', ['sass', 'postcss']);
   grunt.registerTask('build', ['js-build', 'css-build']);
 
   //Developing & Testing
