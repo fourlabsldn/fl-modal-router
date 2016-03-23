@@ -17,6 +17,7 @@
     ".sass-cache"
   ],
   "devDependencies": {
-    "x-div": "~1.0.3"
+    "x-div": "~1.0.3",
+    "bootstrap": "~3.3.6"
   }
 }
