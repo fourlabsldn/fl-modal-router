@@ -1,0 +1,22 @@
+{
+  "name": "fl-modal-router",
+  "description": "Map URLs to modals",
+  "main": "index.js",
+  "authors": [
+    "lazamar @ FourLabs"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/fourlabsldn/fl-modal-router",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    ".sass-cache"
+  ],
+  "devDependencies": {
+    "x-div": "~1.0.3"
+  }
+}
