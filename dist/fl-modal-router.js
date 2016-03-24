@@ -37,6 +37,18 @@ var utils = (function utils() {  // eslint-disable-line
     modalIsShowing = modal.classList.contains('in');
     return modalIsShowing;
   }
+  function keyIsEquivalent(a, b, key) {
+    var isEq = false;
+    if (a[key] && b[key] && typeof a[key] === 'object') {
+      var lengthKeyA = Object.keys(a[key]).length;
+      var lengthKeyB = Object.keys(b[key]).length;
+      isEq = lengthKeyA === lengthKeyB;
+    } else {
+      isEq = a[key] === b[key];
+    }
+
+    return isEq;
+  }
 
   function areEquivalentObjects(a, b) {
     if (!a || typeof a !== 'object' || !b || typeof b !== 'object') {
@@ -49,11 +61,11 @@ var utils = (function utils() {  // eslint-disable-line
     var differences = 0;
 
     keysA.forEach(function f(key) {
-      if (a[key] !== b[key]) { differences++; }
+      if (!keyIsEquivalent(a, b, key)) { differences++; }
     });
 
     keysB.forEach(function f(key) {
-      if (a[key] !== b[key]) { differences++; }
+      if (!keyIsEquivalent(a, b, key)) { differences++; }
     });
 
     return !differences;
@@ -139,6 +151,14 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
   }());
 
   function onModalShow(e) {
+    // Did it show as a result of a state change?
+    var currState = window.history.state;
+    if (currState && currState.isModalState) {
+      // If it did then there is nothing else to be done.
+      return;
+    }
+
+    // Otherwise, then create a new history record with data about this modal.
     var modalButton = e.relatedTarget;
     if (!modalButton) {
       return;
@@ -169,19 +189,16 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
   }
 
   function onModalHide() {
-    var lastModalState = stateHandler.getLastModalState();
-    if (!lastModalState) { return; }
-
-    // First let's see if it is going back in the history.
+    // Did it hide as a result of a state change?
     var currState = window.history.state;
-    var goingBack = utils.areEquivalentObjects(currState, lastModalState.prevState);
-
-    if (goingBack) {
-      // If it is going back we don't need to do anything to the history.
+    if (!currState || !currState.isModalState) {
+      // If it did then there is nothing else to be done.
       return;
     }
 
-    // If it isn't going back the history, then let's add to the history
+    // If it didn't then let's add to the history
+    var lastModalState = stateHandler.getLastModalState();
+    if (!lastModalState) { return; }
     var state = lastModalState.prevState;
     var url = lastModalState.prevUrl;
     var title = '';

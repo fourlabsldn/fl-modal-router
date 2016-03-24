@@ -69,6 +69,14 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
   }());
 
   function onModalShow(e) {
+    // Did it show as a result of a state change?
+    var currState = window.history.state;
+    if (currState && currState.isModalState) {
+      // If it did then there is nothing else to be done.
+      return;
+    }
+
+    // Otherwise, then create a new history record with data about this modal.
     var modalButton = e.relatedTarget;
     if (!modalButton) {
       return;
@@ -99,19 +107,16 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
   }
 
   function onModalHide() {
-    var lastModalState = stateHandler.getLastModalState();
-    if (!lastModalState) { return; }
-
-    // First let's see if it is going back in the history.
+    // Did it hide as a result of a state change?
     var currState = window.history.state;
-    var goingBack = utils.areEquivalentObjects(currState, lastModalState.prevState);
-
-    if (goingBack) {
-      // If it is going back we don't need to do anything to the history.
+    if (!currState || !currState.isModalState) {
+      // If it did then there is nothing else to be done.
       return;
     }
 
-    // If it isn't going back the history, then let's add to the history
+    // If it didn't then let's add to the history
+    var lastModalState = stateHandler.getLastModalState();
+    if (!lastModalState) { return; }
     var state = lastModalState.prevState;
     var url = lastModalState.prevUrl;
     var title = '';

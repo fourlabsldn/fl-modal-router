@@ -37,6 +37,18 @@ var utils = (function utils() {  // eslint-disable-line
     modalIsShowing = modal.classList.contains('in');
     return modalIsShowing;
   }
+  function keyIsEquivalent(a, b, key) {
+    var isEq = false;
+    if (a[key] && b[key] && typeof a[key] === 'object') {
+      var lengthKeyA = Object.keys(a[key]).length;
+      var lengthKeyB = Object.keys(b[key]).length;
+      isEq = lengthKeyA === lengthKeyB;
+    } else {
+      isEq = a[key] === b[key];
+    }
+
+    return isEq;
+  }
 
   function areEquivalentObjects(a, b) {
     if (!a || typeof a !== 'object' || !b || typeof b !== 'object') {
@@ -49,11 +61,11 @@ var utils = (function utils() {  // eslint-disable-line
     var differences = 0;
 
     keysA.forEach(function f(key) {
-      if (a[key] !== b[key]) { differences++; }
+      if (!keyIsEquivalent(a, b, key)) { differences++; }
     });
 
     keysB.forEach(function f(key) {
-      if (a[key] !== b[key]) { differences++; }
+      if (!keyIsEquivalent(a, b, key)) { differences++; }
     });
 
     return !differences;
