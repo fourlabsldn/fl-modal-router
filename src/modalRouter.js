@@ -1,16 +1,3 @@
-(function () {
-var utils = (function utils() {  // eslint-disable-line
-  function getTargetUrl(el) {
-    var targetUrl = el.getAttribute('href');
-    var noRemoteUrl = (!targetUrl || targetUrl === '#' || targetUrl === '');
-    return (noRemoteUrl) ? null : targetUrl;
-  }
-
-  return {
-    getTargetUrl: getTargetUrl,
-  };
-}());
-
 /* eslint-env es5 */
 /* globals $, utils */
 
@@ -73,9 +60,4 @@ var modalRouter = (function modalRouter() {
   return {
     init: init,
   };
-}());
-
-/* global modalRouter */
-
-modalRouter.init();
 }());

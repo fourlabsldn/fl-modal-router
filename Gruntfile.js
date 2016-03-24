@@ -15,7 +15,10 @@ module.exports = function Gruntfile(grunt) {
         separator: '\n',
       },
       dist: {
-        src: ['src/*.js'],
+        src: [
+          'src/utils.js',
+          'src/*.js',
+        ],
         dest: 'dist/fl-modal-router.js',
       },
     },

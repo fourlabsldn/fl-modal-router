@@ -1,0 +1,3 @@
+/* global modalRouter */
+
+modalRouter.init();
