@@ -118,11 +118,11 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
       console.log('No target url');
       return;
     }
-    targetUrl = '/modalOpen';
 
     var targetModal = modalButton.dataset.target;
     if (!targetModal) {
-      throw new Error('ModalRouter: No target modal specified.');
+      console.error('ModalRouter: No target modal specified.');
+      return;
     }
 
     var title = '';
