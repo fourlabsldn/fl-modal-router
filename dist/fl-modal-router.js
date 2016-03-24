@@ -256,8 +256,8 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
 
     var $body = $(body);
     window.addEventListener('popstate', onHistoryChange);
-    $body.on('show.bs.modal', onModalShow);
-    $body.on('hide.bs.modal', onModalHide);
+    $body.on('shown.bs.modal', onModalShow);
+    $body.on('hidden.bs.modal', onModalHide);
   }
 
   return {
