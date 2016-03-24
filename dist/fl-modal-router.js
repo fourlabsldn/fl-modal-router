@@ -38,11 +38,33 @@ var utils = (function utils() {  // eslint-disable-line
     return modalIsShowing;
   }
 
+  function areEquivalentObjects(a, b) {
+    if (!a || typeof a !== 'object' || !b || typeof b !== 'object') {
+      return false;
+    }
+
+    var keysA = Object.keys(a);
+    var keysB = Object.keys(b);
+
+    var differences = 0;
+
+    keysA.forEach(function f(key) {
+      if (a[key] !== b[key]) { differences++; }
+    });
+
+    keysB.forEach(function f(key) {
+      if (a[key] !== b[key]) { differences++; }
+    });
+
+    return !differences;
+  }
+
   return {
     getTargetUrl: getTargetUrl,
     showModalFromState: showModalFromState,
     hideModalFromState: hideModalFromState,
     modalFromStateIsShowing: modalFromStateIsShowing,
+    areEquivalentObjects: areEquivalentObjects,
   };
 }());
 
@@ -70,11 +92,6 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
       window.history.pushState(newState, title, targetUrl);
     }
 
-    function pop() {
-      modalStatesStack.pop();
-      window.history.back();
-    }
-
     // The state can be ahead or behind
     function moveTo(state) {
       // If the state is ahead, then register it in the modalStatesStack
@@ -98,12 +115,26 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
       return modalStatesStack[modalStatesStack.length - 1];
     }
 
+    function isPastState(state) {
+      if (!state) { return false; }
+      var indexOfFound = -1;
+
+      // Loop through modalStatesStack comparing state keys.
+      modalStatesStack.forEach(function m(stackState, stateIndex) {
+        if (utils.areEquivalentObjects(state, stackState) === true) {
+          indexOfFound = stateIndex;
+        }
+      });
+
+      return (indexOfFound >= 0);
+    }
+
     return {
       push: push,
-      pop: pop,
       isInModalState: isInModalState,
       getLastModalState: getLastModalState,
       moveTo: moveTo,
+      isPastState: isPastState,
     };
   }());
 
@@ -130,37 +161,65 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
       isModalState: true,
       targetModal: targetModal,
       targetUrl: targetUrl,
+      prevState: window.history.state,
+      prevUrl: window.location.pathname,
     };
 
     stateHandler.push(state, title, targetUrl);
   }
 
   function onModalHide() {
-    stateHandler.pop();
+    var lastModalState = stateHandler.getLastModalState();
+    if (!lastModalState) { return; }
+
+    // First let's see if it is going back in the history.
+    var currState = window.history.state;
+    var goingBack = utils.areEquivalentObjects(currState, lastModalState.prevState);
+
+    if (goingBack) {
+      // If it is going back we don't need to do anything to the history.
+      return;
+    }
+
+    // If it isn't going back the history, then let's add to the history
+    var state = lastModalState.prevState;
+    var url = lastModalState.prevUrl;
+    var title = '';
+    window.history.pushState(state, title, url);
   }
 
   function onHistoryChange() {
     console.log('History change called');
 
-    // Does the new history state have a modal?
+    // Is the new history state one of the past ones we created?
     var newState = window.history.state;
-    if (newState && newState.isModalState) {
-      // If it does then display it and move the stateHandler to there
-      utils.showModalFromState(newState);
-      stateHandler.moveTo(newState);
+    console.log(newState);
+    var isPastState = stateHandler.isPastState(newState);
+
+    var modalShowing;
+    if (isPastState) {
+      // If it is, then let's make sure the modal is open.
+      modalShowing = utils.modalFromStateIsShowing(newState);
+      if (!modalShowing) {
+        utils.showModalFromState(newState);
+        return;
+      }
     }
 
-    // If it does not then check whether the modal is showing
+    // If it isn't let's see if it has a different URL from our last recorded state
     var lastModalState = stateHandler.getLastModalState();
-    if (utils.modalFromStateIsShowing(lastModalState)) {
-      // If it is showing, hide it
-      // FIXME: this can cause potential problems
-      // when changing states within an open modal.
+    if (lastModalState &&
+        window.location.pathname === lastModalState.targetUrl) {
+      // If it is the same URL then we don't need to change anything.
+      return;
+    }
+
+    // if the url is different let's check whether its modal is showing up
+    modalShowing = utils.modalFromStateIsShowing(lastModalState);
+    // if it is, then hide it.
+    if (modalShowing) {
       utils.hideModalFromState(lastModalState);
     }
-
-    // Otherwise do nothing
-    return;
   }
 
   function init() {

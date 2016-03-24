@@ -38,10 +38,32 @@ var utils = (function utils() {  // eslint-disable-line
     return modalIsShowing;
   }
 
+  function areEquivalentObjects(a, b) {
+    if (!a || typeof a !== 'object' || !b || typeof b !== 'object') {
+      return false;
+    }
+
+    var keysA = Object.keys(a);
+    var keysB = Object.keys(b);
+
+    var differences = 0;
+
+    keysA.forEach(function f(key) {
+      if (a[key] !== b[key]) { differences++; }
+    });
+
+    keysB.forEach(function f(key) {
+      if (a[key] !== b[key]) { differences++; }
+    });
+
+    return !differences;
+  }
+
   return {
     getTargetUrl: getTargetUrl,
     showModalFromState: showModalFromState,
     hideModalFromState: hideModalFromState,
     modalFromStateIsShowing: modalFromStateIsShowing,
+    areEquivalentObjects: areEquivalentObjects,
   };
 }());
