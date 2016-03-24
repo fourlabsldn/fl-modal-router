@@ -1,12 +1,8 @@
-/*globals module, require*/
-
-module.exports = function (grunt) {
-  'use strict';
-
+module.exports = function Gruntfile(grunt) {
   grunt.initConfig({
     open: {
       demo: {
-        path: './demo/index.html',
+        path: 'http://localhost:8282/demo/index.html',
       },
       test: {
         path: './_SpecRunner.html',
@@ -37,12 +33,12 @@ module.exports = function (grunt) {
       options: {
         processors: [
           require('autoprefixer')({
-            browsers: ['last 2 versions']
-          })
-        ]
+            browsers: ['last 2 versions'],
+          }),
+        ],
       },
       dist: {
-        src: 'dist/*.css'
+        src: 'dist/*.css',
       },
     },
     uglify: {
@@ -78,6 +74,19 @@ module.exports = function (grunt) {
         },
       },
     },
+    'http-server': {
+      dev: {
+        root: './',
+        port: 8282,
+        showDir: true,
+        autoIndex: true,
+        ext: 'html',
+        runInBackground: true,
+        customPages: {
+          '/readme': 'README.md',
+        },
+      },
+    },
     jasmine: {
       functional: {
         src: 'dist/fl-modal-router.js',
@@ -85,8 +94,8 @@ module.exports = function (grunt) {
           specs: 'tests/functional/**/*-specs.js',
           helpers: ['./tests/helpers/*.js'],
           vendor: [
-            'bower_components/x-div/js/x-div-tester.js'
-          ]
+            'bower_components/x-div/js/x-div-tester.js',
+          ],
         },
       },
       unit: {
@@ -95,15 +104,16 @@ module.exports = function (grunt) {
           specs: 'tests/unit/**/*-specs.js',
           helpers: ['./tests/helpers/*.js'],
           vendor: [
-            'bower_components/x-div/js/x-div-tester.js'
-          ]
+            'bower_components/x-div/js/x-div-tester.js',
+          ],
         },
       },
-    }
+    },
   });
 
   grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-postcss');
+  grunt.loadNpmTasks('grunt-http-server');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -112,29 +122,33 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', []);
 
-  //Showing demo
+  // Showing demo
   grunt.registerTask('demo', ['open:demo']);
 
-  //Building
+  // Building
   grunt.registerTask('js-build', ['concat', 'uglify']);
   grunt.registerTask('css-build', ['sass', 'postcss']);
   grunt.registerTask('build', ['js-build', 'css-build']);
 
-  //Developing & Testing
+  // Developing & Testing
   grunt.registerTask('dev', [
     'build',
     'jasmine',
+    'http-server',
     'open:demo',
-    'watch']);
+    'watch',
+  ]);
   grunt.registerTask('test-unit', [
     'build',
     'jasmine:unit:build',
     'open:test',
-    'watch']);
+    'watch',
+  ]);
   grunt.registerTask('test-functional', [
     'build',
     'jasmine:functional:build',
     'open:test',
-    'watch']);
+    'watch',
+  ]);
   grunt.registerTask('test', ['jasmine']);
 };
