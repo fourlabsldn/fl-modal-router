@@ -1,3 +1,3 @@
-/* global modalRouter */
+/* global modalRouter, jQuery */
 
 modalRouter.init();

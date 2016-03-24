@@ -1,7 +1,7 @@
 /* eslint-env es5 */
-/* globals $, utils */
+/* globals utils */
 
-var modalRouter = (function modalRouter() {
+var modalRouter = (function modalRouter($) {
   var isInitialised = false;
 
   if (!$) {
@@ -30,7 +30,8 @@ var modalRouter = (function modalRouter() {
   function onModalShow(e) {
     var modalButton = e.relatedTarget;
     if (!modalButton) {
-      throw new Error('ModalRouter: No target button.');
+      console.error('ModalRouter: No target button.');
+      return;
     }
 
     var targetUrl = utils.getTargetUrl(modalButton);
@@ -92,4 +93,4 @@ var modalRouter = (function modalRouter() {
   return {
     init: init,
   };
-}());
+}(jQuery));

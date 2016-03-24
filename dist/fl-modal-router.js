@@ -1,4 +1,4 @@
-(function () {
+(function () {/* globals $ */
 var utils = (function utils() {  // eslint-disable-line
   function getTargetUrl(el) {
     var targetUrl = el.getAttribute('href');
@@ -7,6 +7,17 @@ var utils = (function utils() {  // eslint-disable-line
   }
 
   function showModalFromState(state) {
+    if (!state || !state.targetModal) {
+      return;
+    }
+
+    var target = document.querySelector(state.targetModal);
+    if (!target) {
+      throw new Error('showModalFromState: No modal found with ' +
+            state.targetModal);
+    }
+
+    $(target).modal('show');
     console.log('Imagine I am showing the modal with url ' + state.modalUrl);
     return;
   }
@@ -18,9 +29,9 @@ var utils = (function utils() {  // eslint-disable-line
 }());
 
 /* eslint-env es5 */
-/* globals $, utils */
+/* globals utils */
 
-var modalRouter = (function modalRouter() {
+var modalRouter = (function modalRouter($) {
   var isInitialised = false;
 
   if (!$) {
@@ -49,7 +60,8 @@ var modalRouter = (function modalRouter() {
   function onModalShow(e) {
     var modalButton = e.relatedTarget;
     if (!modalButton) {
-      throw new Error('ModalRouter: No target button.');
+      console.error('ModalRouter: No target button.');
+      return;
     }
 
     var targetUrl = utils.getTargetUrl(modalButton);
@@ -111,9 +123,9 @@ var modalRouter = (function modalRouter() {
   return {
     init: init,
   };
-}());
+}(jQuery));
 
-/* global modalRouter */
+/* global modalRouter, jQuery */
 
 modalRouter.init();
 }());
