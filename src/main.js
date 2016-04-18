@@ -1,3 +1,5 @@
-/* global modalRouter, jQuery */
+/* global , jQuery */
 
-modalRouter.init();
+import modalRouter from './modalRouter.js';
+const router = modalRouter(jQuery);
+router.init();

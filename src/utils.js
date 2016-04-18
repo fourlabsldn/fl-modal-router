@@ -1,8 +1,9 @@
 /* globals $ */
-var utils = (function utils() {  // eslint-disable-line
+
+export default utils = (function utils() {  // eslint-disable-line
   function getTargetUrl(el) {
-    var targetUrl = el.getAttribute('href');
-    var noRemoteUrl = (!targetUrl || targetUrl === '#' || targetUrl === '');
+    const targetUrl = el.getAttribute('href');
+    const noRemoteUrl = (!targetUrl || targetUrl === '#' || targetUrl === '');
     return (noRemoteUrl) ? null : targetUrl;
   }
 
@@ -11,14 +12,13 @@ var utils = (function utils() {  // eslint-disable-line
       return;
     }
 
-    var target = document.querySelector(state.targetModal);
+    const target = document.querySelector(state.targetModal);
     if (!target) {
-      throw new Error('toggleModalFromState: No modal found with ' +
-      state.targetModal);
+      throw new Error(`toggleModalFromState: No modal found with ${state.targetModal}`);
     }
 
     $(target).modal(showHide);
-    console.log('Imagine I am showing the modal with url ' + state.modalUrl);
+    console.log(`Imagine I am showing the modal with url ${state.modalUrl}`);
   }
   function showModalFromState(state) {
     toggleModalFromState(state, 'show');
@@ -29,19 +29,18 @@ var utils = (function utils() {  // eslint-disable-line
   }
 
   function modalFromStateIsShowing(state) {
-    var modalIsShowing = false;
-    var modal;
+    let modalIsShowing = false;
     if (!state) { return false; }
-    var modalQueryString = state.targetModal;
-    modal = document.querySelector(modalQueryString);
+    const modalQueryString = state.targetModal;
+    const modal = document.querySelector(modalQueryString);
     modalIsShowing = modal.classList.contains('in');
     return modalIsShowing;
   }
   function keyIsEquivalent(a, b, key) {
-    var isEq = false;
+    let isEq = false;
     if (a[key] && b[key] && typeof a[key] === 'object') {
-      var lengthKeyA = Object.keys(a[key]).length;
-      var lengthKeyB = Object.keys(b[key]).length;
+      const lengthKeyA = Object.keys(a[key]).length;
+      const lengthKeyB = Object.keys(b[key]).length;
       isEq = lengthKeyA === lengthKeyB;
     } else {
       isEq = a[key] === b[key];
@@ -55,16 +54,16 @@ var utils = (function utils() {  // eslint-disable-line
       return false;
     }
 
-    var keysA = Object.keys(a);
-    var keysB = Object.keys(b);
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
 
-    var differences = 0;
+    let differences = 0;
 
-    keysA.forEach(function f(key) {
+    keysA.forEach((key) => {
       if (!keyIsEquivalent(a, b, key)) { differences++; }
     });
 
-    keysB.forEach(function f(key) {
+    keysB.forEach((key) => {
       if (!keyIsEquivalent(a, b, key)) { differences++; }
     });
 
@@ -72,10 +71,10 @@ var utils = (function utils() {  // eslint-disable-line
   }
 
   return {
-    getTargetUrl: getTargetUrl,
-    showModalFromState: showModalFromState,
-    hideModalFromState: hideModalFromState,
-    modalFromStateIsShowing: modalFromStateIsShowing,
-    areEquivalentObjects: areEquivalentObjects,
+    getTargetUrl,
+    showModalFromState,
+    hideModalFromState,
+    modalFromStateIsShowing,
+    areEquivalentObjects,
   };
 }());

@@ -1,17 +1,16 @@
-/* eslint-env es5 */
-/* globals utils jQuery*/
+import utils from './utils';
 
-var modalRouter = (function modalRouter($) { //eslint-disable-line
-  var isInitialised = false;
+export default function modalRouter($) { //eslint-disable-line
+  let isInitialised = false;
 
   if (!$) {
     throw new Error('ModalRouter: No JQuery');
   }
 
-  var stateHandler = (function stateHandler() {
+  const stateHandler = (function stateHandler() {
     // The modalStatesStack keeps a record of all states that contain a modal
     // and that are behind from the current history position.
-    var modalStatesStack = [];
+    const modalStatesStack = [];
 
     function push(newState, title, targetUrl) {
       if (typeof newState !== 'object') {
@@ -25,8 +24,8 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
     // The state can be ahead or behind
     function moveTo(state) {
       // If the state is ahead, then register it in the modalStatesStack
-      var stateIndex = modalStatesStack.indexOf(state);
-      var stateInStack = (stateIndex >= 0);
+      const stateIndex = modalStatesStack.indexOf(state);
+      const stateInStack = (stateIndex >= 0);
       if (!stateInStack) {
         modalStatesStack.push(state);
       } else {
@@ -47,10 +46,10 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
 
     function isPastState(state) {
       if (!state) { return false; }
-      var indexOfFound = -1;
+      let indexOfFound = -1;
 
       // Loop through modalStatesStack comparing state keys.
-      modalStatesStack.forEach(function m(stackState, stateIndex) {
+      modalStatesStack.forEach((stackState, stateIndex) => {
         if (utils.areEquivalentObjects(state, stackState) === true) {
           indexOfFound = stateIndex;
         }
@@ -59,46 +58,40 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
       return (indexOfFound >= 0);
     }
 
-    return {
-      push: push,
-      isInModalState: isInModalState,
-      getLastModalState: getLastModalState,
-      moveTo: moveTo,
-      isPastState: isPastState,
-    };
+    return { push, isInModalState, getLastModalState, moveTo, isPastState };
   }());
 
   function onModalShow(e) {
     // Did it show as a result of a state change?
-    var currState = window.history.state;
+    const currState = window.history.state;
     if (currState && currState.isModalState) {
       // If it did then there is nothing else to be done.
       return;
     }
 
     // Otherwise, then create a new history record with data about this modal.
-    var modalButton = e.relatedTarget;
+    const modalButton = e.relatedTarget;
     if (!modalButton) {
       return;
     }
 
-    var targetUrl = utils.getTargetUrl(modalButton);
+    const targetUrl = utils.getTargetUrl(modalButton);
     if (!targetUrl) {
       console.log('No target url');
       return;
     }
 
-    var targetModal = modalButton.dataset.target;
+    const targetModal = modalButton.dataset.target;
     if (!targetModal) {
       console.error('ModalRouter: No target modal specified.');
       return;
     }
 
-    var title = '';
-    var state = {
+    const title = '';
+    const state = {
+      targetUrl,
+      targetModal,
       isModalState: true,
-      targetModal: targetModal,
-      targetUrl: targetUrl,
       prevState: window.history.state,
       prevUrl: window.location.pathname,
     };
@@ -108,18 +101,18 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
 
   function onModalHide() {
     // Did it hide as a result of a state change?
-    var currState = window.history.state;
+    const currState = window.history.state;
     if (!currState || !currState.isModalState) {
       // If it did then there is nothing else to be done.
       return;
     }
 
     // If it didn't then let's add to the history
-    var lastModalState = stateHandler.getLastModalState();
+    const lastModalState = stateHandler.getLastModalState();
     if (!lastModalState) { return; }
-    var state = lastModalState.prevState;
-    var url = lastModalState.prevUrl;
-    var title = '';
+    const state = lastModalState.prevState;
+    const url = lastModalState.prevUrl;
+    const title = '';
     window.history.pushState(state, title, url);
   }
 
@@ -127,11 +120,11 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
     console.log('History change called');
 
     // Is the new history state one of the past ones we created?
-    var newState = window.history.state;
+    const newState = window.history.state;
     console.log(newState);
-    var isPastState = stateHandler.isPastState(newState);
+    const isPastState = stateHandler.isPastState(newState);
 
-    var modalShowing;
+    let modalShowing;
     if (isPastState) {
       // If it is, then let's make sure the modal is open.
       modalShowing = utils.modalFromStateIsShowing(newState);
@@ -142,7 +135,7 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
     }
 
     // If it isn't let's see if it has a different URL from our last recorded state
-    var lastModalState = stateHandler.getLastModalState();
+    const lastModalState = stateHandler.getLastModalState();
     if (lastModalState &&
         window.location.pathname === lastModalState.targetUrl) {
       // If it is the same URL then we don't need to change anything.
@@ -165,20 +158,20 @@ var modalRouter = (function modalRouter($) { //eslint-disable-line
     isInitialised = true;
 
     // Check if body was loaded, if it wasn't then come back when it has;
-    var body = document.body;
+    const body = document.body;
     if (!body) {
       isInitialised = false;
       window.addEventListener('load', init);
       return;
     }
 
-    var $body = $(body);
+    const $body = $(body);
     window.addEventListener('popstate', onHistoryChange);
     $body.on('shown.bs.modal', onModalShow);
     $body.on('hidden.bs.modal', onModalHide);
   }
 
   return {
-    init: init,
+    init,
   };
-}(jQuery));
+}

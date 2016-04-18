@@ -47,17 +47,17 @@ module.exports = function Gruntfile(grunt) {
         src: 'dist/*.css',
       },
     },
-    uglify: {
-      main: {
-        options: {
-          sourceMap: true,
-          sourceMapName: 'dist/fl-modal-router.map',
-        },
-        files: {
-          'dist/fl-modal-router.min.js': ['dist/fl-modal-router.js'],
-        },
-      },
-    },
+    // uglify: {
+    //   main: {
+    //     options: {
+    //       sourceMap: true,
+    //       sourceMapName: 'dist/fl-modal-router.map',
+    //     },
+    //     files: {
+    //       'dist/fl-modal-router.min.js': ['dist/fl-modal-router.js'],
+    //     },
+    //   },
+    // },
     watch: {
       css: {
         files: 'src/**/*.sass',
@@ -148,7 +148,8 @@ module.exports = function Gruntfile(grunt) {
   grunt.registerTask('demo', ['open:demo']);
 
   // Building
-  grunt.registerTask('js-build', ['rollup', 'uglify']);
+  // grunt.registerTask('js-build', ['rollup', 'uglify']);
+  grunt.registerTask('js-build', ['rollup']);
   grunt.registerTask('css-build', ['sass', 'postcss']);
   grunt.registerTask('build', ['js-build', 'css-build']);
 
