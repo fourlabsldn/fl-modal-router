@@ -31,7 +31,7 @@
   <hr>
   <div class="row text-center">
       <h3>Tabs Modal</h3>
-      <a href="tabs.html" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#largeModal">Click to open Modal</a>
+      <a href="tabs.html" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#largeModal" data-remote="false">Click to open Modal</a>
   </div>
 </div>
 
@@ -54,6 +54,22 @@
     </div>
   </div>
 </div>
+
+<script>
+$("#largeModal").on("show.bs.modal", function(e) {
+  if (e.relatedTarget) {
+    var link = e.relatedTarget.getAttribute('href');
+    var modalBody = this.querySelector(".modal-content");
+    fetch(link)
+    .then(function (data) {
+      return data.text();
+    })
+    .then(function (content){
+      modalBody.innerHTML = content;
+    });
+  }
+});
+</script>
 
 
   <script src="http://localhost:35729/livereload.js"></script>

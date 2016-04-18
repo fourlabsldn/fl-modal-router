@@ -31,12 +31,32 @@ function hideModal(modal) {
   $(modal).modal('hide');
 }
 
-function showModal(modal) {
+function showModal(modal, targetUrl) {
+  // Hide any backdrops that may remain.
   const backdrops = Array.from(document.querySelectorAll('.modal-backdrop'));
   for (const backdrop of backdrops) {
     backdrop.remove();
   }
 
+  if (targetUrl) {
+    fetch(targetUrl).then(data => {
+      return data.text();
+    }).then(content => {
+      // By the time this finishes loading, the modal may already have
+      // disappeared.
+      const modalWasRemoved = !modal;
+      const pageMovedOnToAnotherAddress = !window.history.state || window.history.state.targetUrl !== targetUrl;
+
+      if (modalWasRemoved || pageMovedOnToAnotherAddress) {
+        return;
+      }
+      const modalBody = modal.querySelector('.modal-content');
+      assert(modalBody, 'Modal body not found.');
+      modalBody.innerHTML = content;
+    });
+  }
+
+  // Show the modal
   const modalObj = $(modal).modal();
   modalObj.modal('show');
 }
@@ -58,6 +78,7 @@ class StateHandler {
 
     // The lastNoModalUrl will be the same one as the one from
     // the state this state will replace.
+    // TODO: When to change the lastNoModalUrl to the current one?
     const currState = this.getCurrentState() || {};
     state.lastNoModalUrl = currState.lastNoModalUrl;
 
@@ -108,7 +129,7 @@ class StateHandler {
       // If it isn't let's hide the wrong one if there is any
       utils.hideModal(currOpenModal);
       // and then open the right one if there is any to open.
-      utils.showModal(stateModal);
+      utils.showModal(stateModal, state.targetUrl);
     }
   }
 
