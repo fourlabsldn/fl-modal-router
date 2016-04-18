@@ -7,11 +7,25 @@ class StateHandler {
   }
 
   generateStateObject(baseObj, stateUrl) {
-    const openModalSelector = utils.getOpenModalSelector();
     const state = baseObj || {};
-    if (openModalSelector) { state.modalSelector = openModalSelector; }
-    state.targetUrl = stateUrl || window.location.href;
     state.editedByModalRouter = true;
+
+    // The lastNoModalUrl will be the same one as the one from
+    // the state this state will replace.
+    const currState = this.getCurrentState() || {};
+    state.lastNoModalUrl = currState.lastNoModalUrl;
+
+    const openModalSelector = utils.getOpenModalSelector();
+    if (openModalSelector) {
+      state.modalSelector = openModalSelector;
+      state.targetUrl = stateUrl || window.location.href;
+    } else {
+      // If there is no modal open, then the current url is the last
+      // one without a modal.
+      state.modalSelector = null;
+      state.targetUrl = state.lastNoModalUrl;
+    }
+
     return state;
   }
 
@@ -24,7 +38,6 @@ class StateHandler {
     const state = this.getCurrentState();
     if (this.isEdited(state)) { return; }
     const newState = this.generateStateObject(state);
-    this.pushState(newState);
     this.replaceState(newState);
   }
 

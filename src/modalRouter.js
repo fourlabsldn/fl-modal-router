@@ -34,9 +34,18 @@ export default function modalRouter($) {
 
     // If it wasn't shown to enforce a state, then we need to create
     // a new History state to accomodate this modal state.
-    // But first, let's get the remote url it is loading, if it is loading any.
-    const relatedTarget = e.relatedTarget;
-    const targetUrl = (relatedTarget) ? relatedTarget.getAttribute('href') : null;
+    let targetUrl;
+    if (e.type === 'shown') {
+      // If the modal is being shown our targetURL will be the modal's
+      // remote URL, if it is loading one.
+      const relatedTarget = e.relatedTarget;
+      targetUrl = (relatedTarget) ? relatedTarget.getAttribute('href') : null;
+    } else if (e.type === 'hidden') {
+      console.log('hidden');
+    } else {
+      // Should never come here.
+      assert(false, 'Error processing modal state. Not shown or hidden.');
+    }
 
     // Now we are ready to create the new state with the right URL
     stateHandler.createNewState(targetUrl);

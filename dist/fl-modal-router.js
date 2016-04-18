@@ -32,7 +32,13 @@ function hideModal(modal) {
 }
 
 function showModal(modal) {
-  $(modal).modal('show');
+  const backdrops = Array.from(document.querySelectorAll('.modal-backdrop'));
+  for (const backdrop of backdrops) {
+    backdrop.remove();
+  }
+
+  const modalObj = $(modal).modal();
+  modalObj.modal('show');
 }
 
 var utils = {
@@ -47,13 +53,25 @@ class StateHandler {
   }
 
   generateStateObject(baseObj, stateUrl) {
-    const openModalSelector = utils.getOpenModalSelector();
     const state = baseObj || {};
+    state.editedByModalRouter = true;
+
+    // The lastNoModalUrl will be the same one as the one from
+    // the state this state will replace.
+    const currState = this.getCurrentState() || {};
+    state.lastNoModalUrl = currState.lastNoModalUrl;
+
+    const openModalSelector = utils.getOpenModalSelector();
     if (openModalSelector) {
       state.modalSelector = openModalSelector;
+      state.targetUrl = stateUrl || window.location.href;
+    } else {
+      // If there is no modal open, then the current url is the last
+      // one without a modal.
+      state.modalSelector = null;
+      state.targetUrl = state.lastNoModalUrl;
     }
-    state.targetUrl = stateUrl || window.location.href;
-    state.editedByModalRouter = true;
+
     return state;
   }
 
@@ -68,7 +86,6 @@ class StateHandler {
       return;
     }
     const newState = this.generateStateObject(state);
-    this.pushState(newState);
     this.replaceState(newState);
   }
 
@@ -167,9 +184,18 @@ function modalRouter($) {
 
     // If it wasn't shown to enforce a state, then we need to create
     // a new History state to accomodate this modal state.
-    // But first, let's get the remote url it is loading, if it is loading any.
-    const relatedTarget = e.relatedTarget;
-    const targetUrl = relatedTarget ? relatedTarget.getAttribute('href') : null;
+    let targetUrl;
+    if (e.type === 'shown') {
+      // If the modal is being shown our targetURL will be the modal's
+      // remote URL, if it is loading one.
+      const relatedTarget = e.relatedTarget;
+      targetUrl = relatedTarget ? relatedTarget.getAttribute('href') : null;
+    } else if (e.type === 'hidden') {
+      console.log('hidden');
+    } else {
+      // Should never come here.
+      assert(false, 'Error processing modal state. Not shown or hidden.');
+    }
 
     // Now we are ready to create the new state with the right URL
     stateHandler.createNewState(targetUrl);

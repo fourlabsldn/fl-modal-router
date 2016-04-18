@@ -21,7 +21,13 @@ function hideModal(modal) {
 }
 
 function showModal(modal) {
-  $(modal).modal('show');
+  const backdrops = Array.from(document.querySelectorAll('.modal-backdrop'));
+  for (const backdrop of backdrops) {
+    backdrop.remove();
+  }
+
+  const modalObj = $(modal).modal();
+  modalObj.modal('show');
 }
 
 export default {
