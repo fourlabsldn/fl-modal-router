@@ -1,3 +1,6 @@
+/* globals module, require*/
+const babel = require('rollup-plugin-babel');
+
 module.exports = function Gruntfile(grunt) {
   grunt.initConfig({
     open: {
@@ -8,20 +11,20 @@ module.exports = function Gruntfile(grunt) {
         path: './_SpecRunner.html',
       },
     },
-    concat: {
-      options: {
-        banner: '(function () {',
-        footer: '}());',
-        separator: '\n',
-      },
-      dist: {
-        src: [
-          'src/utils.js',
-          'src/*.js',
-        ],
-        dest: 'dist/fl-modal-router.js',
-      },
-    },
+    // concat: {
+    //   options: {
+    //     banner: '(function () {',
+    //     footer: '}());',
+    //     separator: '\n',
+    //   },
+    //   dist: {
+    //     src: [
+    //       'src/utils.js',
+    //       'src/*.js',
+    //     ],
+    //     dest: 'dist/fl-modal-router.js',
+    //   },
+    // },
     sass: {
       dist: {
         options: {
@@ -112,9 +115,25 @@ module.exports = function Gruntfile(grunt) {
         },
       },
     },
+    rollup: {
+      options: {
+        plugins: () => {
+          return [
+            babel({
+              exclude: './node_modules/**',
+            }),
+          ];
+        },
+      },
+      main: {
+        dest: 'dist/fl-modal-router.js',
+        src: 'src/main.js', // Only one source file is permitted
+      },
+    },
   });
 
   grunt.loadNpmTasks('grunt-open');
+  grunt.loadNpmTasks('grunt-rollup');
   grunt.loadNpmTasks('grunt-postcss');
   grunt.loadNpmTasks('grunt-http-server');
   grunt.loadNpmTasks('grunt-contrib-sass');
@@ -129,7 +148,7 @@ module.exports = function Gruntfile(grunt) {
   grunt.registerTask('demo', ['open:demo']);
 
   // Building
-  grunt.registerTask('js-build', ['concat', 'uglify']);
+  grunt.registerTask('js-build', ['rollup', 'uglify']);
   grunt.registerTask('css-build', ['sass', 'postcss']);
   grunt.registerTask('build', ['js-build', 'css-build']);
 

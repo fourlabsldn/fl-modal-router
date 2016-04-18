@@ -23,7 +23,9 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-http-server": "^1.14.0",
     "grunt-open": "^0.2.3",
-    "grunt-postcss": "^0.8.0"
+    "grunt-postcss": "^0.8.0",
+    "grunt-rollup": "^0.7.1",
+    "rollup-plugin-babel": "^2.4.0"
   },
   "directories": {
     "test": "tests"
