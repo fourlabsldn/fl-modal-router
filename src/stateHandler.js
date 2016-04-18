@@ -1,12 +1,12 @@
+import assert from './assert.js';
+
 const stateHandler = (function stateHandler() {
   // The modalStatesStack keeps a record of all states that contain a modal
   // and that are behind from the current history position.
   const modalStatesStack = [];
 
   function push(newState, title, targetUrl) {
-    if (typeof newState !== 'object') {
-      throw new Error('stateTracker: Invalid state object.');
-    }
+    assert(typeof newState === 'object', 'stateTracker: Invalid state object.');
 
     modalStatesStack.push(newState);
     window.history.pushState(newState, title, targetUrl);

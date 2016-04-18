@@ -86,15 +86,29 @@ var utils$1 = utils = function utils() {
   };
 }();
 
+// Bug checking function that will throw an error whenever
+// the condition sent to it is evaluated to false
+function assert(condition, errorMessage) {
+
+  if (!condition) {
+    let completeErrorMessage = '';
+
+    if (assert.caller && assert.caller.name) {
+      completeErrorMessage = assert.caller.name + ': ';
+    }
+
+    completeErrorMessage += errorMessage;
+    throw new Error(completeErrorMessage);
+  }
+}
+
 const stateHandler = function stateHandler() {
   // The modalStatesStack keeps a record of all states that contain a modal
   // and that are behind from the current history position.
   const modalStatesStack = [];
 
   function push(newState, title, targetUrl) {
-    if (typeof newState !== 'object') {
-      throw new Error('stateTracker: Invalid state object.');
-    }
+    assert(typeof newState === 'object', 'stateTracker: Invalid state object.');
 
     modalStatesStack.push(newState);
     window.history.pushState(newState, title, targetUrl);
@@ -146,7 +160,7 @@ function modalRouter($) {
   let isInitialised = false;
 
   if (!$) {
-    throw new Error('ModalRouter: No JQuery');
+    assert(false, 'ModalRouter: No JQuery');
   }
 
   function onModalShow(e) {

@@ -1,12 +1,11 @@
 import utils from './utils';
 import stateHandler from './stateHandler';
+import assert from './assert.js';
 
 export default function modalRouter($) {
   let isInitialised = false;
 
-  if (!$) {
-    throw new Error('ModalRouter: No JQuery');
-  }
+  assert($, 'ModalRouter: No JQuery'); }
 
   function onModalShow(e) {
     // Did it show as a result of a state change?
