@@ -1,91 +1,3 @@
-/* globals $ */
-
-var utils$1 = utils = function utils() {
-  // eslint-disable-line
-  function getTargetUrl(el) {
-    const targetUrl = el.getAttribute('href');
-    const noRemoteUrl = !targetUrl || targetUrl === '#' || targetUrl === '';
-    return noRemoteUrl ? null : targetUrl;
-  }
-
-  function toggleModalFromState(state, showHide) {
-    if (!state || !state.targetModal) {
-      return;
-    }
-
-    const target = document.querySelector(state.targetModal);
-    if (!target) {
-      throw new Error(`toggleModalFromState: No modal found with ${ state.targetModal }`);
-    }
-
-    $(target).modal(showHide);
-    console.log(`Imagine I am showing the modal with url ${ state.modalUrl }`);
-  }
-  function showModalFromState(state) {
-    toggleModalFromState(state, 'show');
-  }
-
-  function hideModalFromState(state) {
-    toggleModalFromState(state, 'hide');
-  }
-
-  function modalFromStateIsShowing(state) {
-    let modalIsShowing = false;
-    if (!state) {
-      return false;
-    }
-    const modalQueryString = state.targetModal;
-    const modal = document.querySelector(modalQueryString);
-    modalIsShowing = modal.classList.contains('in');
-    return modalIsShowing;
-  }
-  function keyIsEquivalent(a, b, key) {
-    let isEq = false;
-    if (a[key] && b[key] && typeof a[key] === 'object') {
-      const lengthKeyA = Object.keys(a[key]).length;
-      const lengthKeyB = Object.keys(b[key]).length;
-      isEq = lengthKeyA === lengthKeyB;
-    } else {
-      isEq = a[key] === b[key];
-    }
-
-    return isEq;
-  }
-
-  function areEquivalentObjects(a, b) {
-    if (!a || typeof a !== 'object' || !b || typeof b !== 'object') {
-      return false;
-    }
-
-    const keysA = Object.keys(a);
-    const keysB = Object.keys(b);
-
-    let differences = 0;
-
-    keysA.forEach(key => {
-      if (!keyIsEquivalent(a, b, key)) {
-        differences++;
-      }
-    });
-
-    keysB.forEach(key => {
-      if (!keyIsEquivalent(a, b, key)) {
-        differences++;
-      }
-    });
-
-    return !differences;
-  }
-
-  return {
-    getTargetUrl,
-    showModalFromState,
-    hideModalFromState,
-    modalFromStateIsShowing,
-    areEquivalentObjects
-  };
-}();
-
 // Bug checking function that will throw an error whenever
 // the condition sent to it is evaluated to false
 function assert(condition, errorMessage) {
@@ -102,155 +14,165 @@ function assert(condition, errorMessage) {
   }
 }
 
-const stateHandler = function stateHandler() {
-  // The modalStatesStack keeps a record of all states that contain a modal
-  // and that are behind from the current history position.
-  const modalStatesStack = [];
+function getOpenModalSelector() {
+  const pageModalsLiveCol = document.querySelectorAll('.modal');
+  const pageModals = Array.from(pageModalsLiveCol);
+  for (const modal of pageModals) {
+    // Check whether the modal is open.
+    if (modal.classList.contains('in')) {
+      // If it is open, then return its id.
+      return `#${ modal.id }`;
+    }
+  }
+  return null;
+}
 
-  function push(newState, title, targetUrl) {
-    assert(typeof newState === 'object', 'stateTracker: Invalid state object.');
+function hideModal(modal) {
+  $(modal).modal('hide');
+}
 
-    modalStatesStack.push(newState);
-    window.history.pushState(newState, title, targetUrl);
+function showModal(modal) {
+  $(modal).modal('show');
+}
+
+var utils = {
+  getOpenModalSelector,
+  hideModal,
+  showModal
+};
+
+class StateHandler {
+  constructor() {
+    console.log('Statehandler Initialised');
   }
 
-  // The state can be ahead or behind
-  function moveTo(state) {
-    // If the state is ahead, then register it in the modalStatesStack
-    const stateIndex = modalStatesStack.indexOf(state);
-    const stateInStack = stateIndex >= 0;
-    if (!stateInStack) {
-      modalStatesStack.push(state);
-    } else {
-      // If the state is behind, remove all states after it.
-      modalStatesStack.splice(stateIndex + 1);
+  generateStateObject(baseObj, stateUrl) {
+    const openModalSelector = utils.getOpenModalSelector();
+    const state = baseObj || {};
+    if (openModalSelector) {
+      state.modalSelector = openModalSelector;
+    }
+    state.targetUrl = stateUrl || window.location.href;
+    state.editedByModalRouter = true;
+    return state;
+  }
+
+  createNewState(stateUrl) {
+    const newState = this.generateStateObject({}, stateUrl);
+    this.pushState(newState);
+  }
+
+  editCurrentState() {
+    const state = this.getCurrentState();
+    if (this.isEdited(state)) {
+      return;
+    }
+    const newState = this.generateStateObject(state);
+    this.pushState(newState);
+    this.replaceState(newState);
+  }
+
+  isEdited(state) {
+    return state && !!state.editedByModalRouter;
+  }
+
+  enforceState(state) {
+    assert(state, '${state} is not a valid state to be enforced');
+    // Let's get any modal that is open.
+    const currOpenModalSelector = utils.getOpenModalSelector();
+    const currOpenModal = document.querySelector(currOpenModalSelector);
+
+    // Let's try to get the modal used in the state description
+    // if there is any modal in the state description.
+    const stateModal = document.querySelector(state.modalSelector);
+
+    // Is the modal that is open, the one that should be open?
+    if (currOpenModal !== stateModal) {
+      // If it isn't let's hide the wrong one if there is any
+      utils.hideModal(currOpenModal);
+      // and then open the right one if there is any to open.
+      utils.showModal(stateModal);
     }
   }
 
-  function isInModalState() {
-    return modalStatesStack.length > 0;
-  }
+  isEnforced(state) {
+    // Let's get any modal that is open.
+    const currOpenModalSelector = utils.getOpenModalSelector();
+    const currOpenModal = document.querySelector(currOpenModalSelector);
 
-  // It is not called "getLastState" because there is no guarantee that
-  // the there were no new states between after the lastModalState;
-  function getLastModalState() {
-    return modalStatesStack[modalStatesStack.length - 1];
-  }
+    // Let's try to get the modal used in the state description
+    // if there is any modal in the state description.
+    const stateModal = document.querySelector(state.modalSelector);
 
-  function isPastState(state) {
-    if (!state) {
+    // If whatever is open (even if nothing is open and currOpenModal points
+    // to null) is different from what should be open (even if nothing should
+    // be open and stateModal points to null) then the state is not enforced.
+    if (currOpenModal !== stateModal) {
+      // if it isn't, then the state is not enforced.
       return false;
     }
-    let indexOfFound = -1;
-
-    // Loop through modalStatesStack comparing state keys.
-    modalStatesStack.forEach((stackState, stateIndex) => {
-      if (utils.areEquivalentObjects(state, stackState) === true) {
-        indexOfFound = stateIndex;
-      }
-    });
-
-    return indexOfFound >= 0;
+    // Otherwise the state is enforced
+    return true;
   }
 
-  return { push, isInModalState, getLastModalState, moveTo, isPastState };
-}();
+  replaceState(state) {
+    assert(state && state.targetUrl, 'No state or target URL provided.');
+    window.history.replaceState(state, '', state.targetUrl);
+  }
+
+  pushState(state) {
+    assert(state && state.targetUrl, 'No state or target URL provided.');
+    window.history.pushState(state, '', state.targetUrl);
+  }
+
+  getCurrentState() {
+    return window.history.state;
+  }
+}
+
+const stateHandler = new StateHandler();
 
 function modalRouter($) {
-  let isInitialised = false;
+  let isInitialised;
 
-  if (!$) {
-    assert(false, 'ModalRouter: No JQuery');
+  function onHistoryChange(popStateEvent) {
+    console.log('History state change');
+    const state = popStateEvent.state;
+
+    // Check if it is a state we added stuff to.
+    if (!stateHandler.isEdited(state)) {
+      // If it is not, then let's fill it with data about its
+      // current state.
+      stateHandler.editCurrentState();
+    } else {
+      // if it is, then let's make sure that the state of things
+      // is the way it should be.
+      stateHandler.enforceState(state);
+    }
   }
 
-  function onModalShow(e) {
-    // Did it show as a result of a state change?
-    const currState = window.history.state;
-    if (currState && currState.isModalState) {
-      // If it did then there is nothing else to be done.
+  function onModalStateChange(e) {
+    const state = window.history.state;
+    assert(typeof state !== 'undefined', 'Unable to retrieve window state.');
+
+    // First, the current window state should already have been edited by
+    // our state handler. If it wasn't, then we have a bug.
+    assert(stateHandler.isEdited(state), 'State should already have been edited.');
+
+    // Let's check whether it was shown or hidden to enforce a state change.
+    // If it was, the state is already enforced and there is nothing else to do.
+    if (stateHandler.isEnforced(state)) {
       return;
     }
 
-    // Otherwise, then create a new history record with data about this modal.
-    const modalButton = e.relatedTarget;
-    if (!modalButton) {
-      return;
-    }
+    // If it wasn't shown to enforce a state, then we need to create
+    // a new History state to accomodate this modal state.
+    // But first, let's get the remote url it is loading, if it is loading any.
+    const relatedTarget = e.relatedTarget;
+    const targetUrl = relatedTarget ? relatedTarget.getAttribute('href') : null;
 
-    const targetUrl = utils$1.getTargetUrl(modalButton);
-    if (!targetUrl) {
-      console.log('No target url');
-      return;
-    }
-
-    const targetModal = modalButton.dataset.target;
-    if (!targetModal) {
-      console.error('ModalRouter: No target modal specified.');
-      return;
-    }
-
-    const title = '';
-    const state = {
-      targetUrl,
-      targetModal,
-      isModalState: true,
-      prevState: window.history.state,
-      prevUrl: window.location.pathname
-    };
-
-    stateHandler.push(state, title, targetUrl);
-  }
-
-  function onModalHide() {
-    // Did it hide as a result of a state change?
-    const currState = window.history.state;
-    if (!currState || !currState.isModalState) {
-      // If it did then there is nothing else to be done.
-      return;
-    }
-
-    // If it didn't then let's add to the history
-    const lastModalState = stateHandler.getLastModalState();
-    if (!lastModalState) {
-      return;
-    }
-    const state = lastModalState.prevState;
-    const url = lastModalState.prevUrl;
-    const title = '';
-    window.history.pushState(state, title, url);
-  }
-
-  function onHistoryChange() {
-    console.log('History change called');
-
-    // Is the new history state one of the past ones we created?
-    const newState = window.history.state;
-    console.log(newState);
-    const isPastState = stateHandler.isPastState(newState);
-
-    let modalShowing;
-    if (isPastState) {
-      // If it is, then let's make sure the modal is open.
-      modalShowing = utils$1.modalFromStateIsShowing(newState);
-      if (!modalShowing) {
-        utils$1.showModalFromState(newState);
-        return;
-      }
-    }
-
-    // If it isn't let's see if it has a different URL from our last recorded state
-    const lastModalState = stateHandler.getLastModalState();
-    if (lastModalState && window.location.pathname === lastModalState.targetUrl) {
-      // If it is the same URL then we don't need to change anything.
-      return;
-    }
-
-    // if the url is different let's check whether its modal is showing up
-    modalShowing = utils$1.modalFromStateIsShowing(lastModalState);
-    // if it is, then hide it.
-    if (modalShowing) {
-      utils$1.hideModalFromState(lastModalState);
-    }
+    // Now we are ready to create the new state with the right URL
+    stateHandler.createNewState(targetUrl);
   }
 
   function init() {
@@ -268,10 +190,13 @@ function modalRouter($) {
       return;
     }
 
-    const $body = $(body);
+    const $body = $(document.body);
     window.addEventListener('popstate', onHistoryChange);
-    $body.on('shown.bs.modal', onModalShow);
-    $body.on('hidden.bs.modal', onModalHide);
+    $body.on('shown.bs.modal', onModalStateChange);
+    $body.on('hidden.bs.modal', onModalStateChange);
+
+    // Edit current state to start.
+    stateHandler.editCurrentState();
   }
 
   return {

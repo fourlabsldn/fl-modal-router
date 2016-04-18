@@ -1,55 +1,91 @@
-import assert from './assert.js';
+import assert from './assert';
+import utils from './utils';
 
-const stateHandler = (function stateHandler() {
-  // The modalStatesStack keeps a record of all states that contain a modal
-  // and that are behind from the current history position.
-  const modalStatesStack = [];
-
-  function push(newState, title, targetUrl) {
-    assert(typeof newState === 'object', 'stateTracker: Invalid state object.');
-
-    modalStatesStack.push(newState);
-    window.history.pushState(newState, title, targetUrl);
+class StateHandler {
+  constructor() {
+    console.log('Statehandler Initialised');
   }
 
-  // The state can be ahead or behind
-  function moveTo(state) {
-    // If the state is ahead, then register it in the modalStatesStack
-    const stateIndex = modalStatesStack.indexOf(state);
-    const stateInStack = (stateIndex >= 0);
-    if (!stateInStack) {
-      modalStatesStack.push(state);
-    } else {
-      // If the state is behind, remove all states after it.
-      modalStatesStack.splice(stateIndex + 1);
+  generateStateObject(baseObj, stateUrl) {
+    const openModalSelector = utils.getOpenModalSelector();
+    const state = baseObj || {};
+    if (openModalSelector) { state.modalSelector = openModalSelector; }
+    state.targetUrl = stateUrl || window.location.href;
+    state.editedByModalRouter = true;
+    return state;
+  }
+
+  createNewState(stateUrl) {
+    const newState = this.generateStateObject({}, stateUrl);
+    this.pushState(newState);
+  }
+
+  editCurrentState() {
+    const state = this.getCurrentState();
+    if (this.isEdited(state)) { return; }
+    const newState = this.generateStateObject(state);
+    this.pushState(newState);
+    this.replaceState(newState);
+  }
+
+  isEdited(state) {
+    return state && !!state.editedByModalRouter;
+  }
+
+  enforceState(state) {
+    assert(state, '${state} is not a valid state to be enforced');
+    // Let's get any modal that is open.
+    const currOpenModalSelector = utils.getOpenModalSelector();
+    const currOpenModal = document.querySelector(currOpenModalSelector);
+
+    // Let's try to get the modal used in the state description
+    // if there is any modal in the state description.
+    const stateModal = document.querySelector(state.modalSelector);
+
+    // Is the modal that is open, the one that should be open?
+    if (currOpenModal !== stateModal) {
+      // If it isn't let's hide the wrong one if there is any
+      utils.hideModal(currOpenModal);
+      // and then open the right one if there is any to open.
+      utils.showModal(stateModal);
     }
   }
 
-  function isInModalState() {
-    return (modalStatesStack.length > 0);
+  isEnforced(state) {
+    // Let's get any modal that is open.
+    const currOpenModalSelector = utils.getOpenModalSelector();
+    const currOpenModal = document.querySelector(currOpenModalSelector);
+
+    // Let's try to get the modal used in the state description
+    // if there is any modal in the state description.
+    const stateModal = document.querySelector(state.modalSelector);
+
+    // If whatever is open (even if nothing is open and currOpenModal points
+    // to null) is different from what should be open (even if nothing should
+    // be open and stateModal points to null) then the state is not enforced.
+    if (currOpenModal !== stateModal) {
+      // if it isn't, then the state is not enforced.
+      return false;
+    }
+    // Otherwise the state is enforced
+    return true;
   }
 
-  // It is not called "getLastState" because there is no guarantee that
-  // the there were no new states between after the lastModalState;
-  function getLastModalState() {
-    return modalStatesStack[modalStatesStack.length - 1];
+  replaceState(state) {
+    assert(state && state.targetUrl, 'No state or target URL provided.');
+    window.history.replaceState(state, '', state.targetUrl);
   }
 
-  function isPastState(state) {
-    if (!state) { return false; }
-    let indexOfFound = -1;
-
-    // Loop through modalStatesStack comparing state keys.
-    modalStatesStack.forEach((stackState, stateIndex) => {
-      if (utils.areEquivalentObjects(state, stackState) === true) {
-        indexOfFound = stateIndex;
-      }
-    });
-
-    return (indexOfFound >= 0);
+  pushState(state) {
+    assert(state && state.targetUrl, 'No state or target URL provided.');
+    window.history.pushState(state, '', state.targetUrl);
   }
 
-  return { push, isInModalState, getLastModalState, moveTo, isPastState };
-}());
+  getCurrentState() {
+    return window.history.state;
+  }
+}
 
+
+const stateHandler = new StateHandler();
 export default stateHandler;
