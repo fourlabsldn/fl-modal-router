@@ -14,7 +14,7 @@ class StateHandler {
     // the state this state will replace.
     // TODO: When to change the lastNoModalUrl to the current one?
     const currState = this.getCurrentState() || {};
-    state.lastNoModalUrl = currState.lastNoModalUrl;
+    state.lastNoModalUrl = currState.lastNoModalUrl || window.location.href;
 
     const openModalSelector = utils.getOpenModalSelector();
     if (openModalSelector) {

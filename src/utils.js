@@ -28,6 +28,7 @@ function showModal(modal, targetUrl) {
   }
 
   if (targetUrl) {
+    // TODO: use xmlhttpRequest
     fetch(targetUrl)
     .then((data) => { return data.text(); })
     .then((content) => {

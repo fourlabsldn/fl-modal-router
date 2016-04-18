@@ -121,6 +121,7 @@ module.exports = function Gruntfile(grunt) {
           return [
             babel({
               exclude: './node_modules/**',
+              presets: ['es2015-rollup'],
             }),
           ];
         },
