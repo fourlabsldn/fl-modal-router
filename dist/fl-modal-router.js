@@ -42,6 +42,7 @@ function assert(condition, errorMessage) {
   }
 }
 
+// TODO: this should return a better selector than just an ID.
 function getOpenModalSelector() {
   var pageModalsLiveCol = document.querySelectorAll('.modal');
   var pageModals = Array.from(pageModalsLiveCol);
@@ -139,53 +140,99 @@ var utils = {
   showModal: showModal
 };
 
+// -------- Private methods ------------ //
+/**
+ * @function generateStateObject
+ * @param  {Object} lastEditedState This can be the current or the previous state
+ * 																	depending on whether the current state was already
+ * 																	edited or not.
+ * @param  {String} stateUrl
+ * @param  {Object} baseObj         Other routines may be editing the history
+ *                                  	too, so let's use whatever is in the history
+ *                                   	object as a baseObj and just extend that.
+ * @return {Object}                 The state object ready to go the history api
+ */
+function generateStateObject(lastEditedState, stateUrl, baseObj) {
+  var state = baseObj || {};
+  state.editedByModalRouter = true;
+
+  var openModalSelector = utils.getOpenModalSelector();
+  var currState = getCurrentState() || {};
+
+  // TODO: change this edited check to use the class' routine.
+  if (!openModalSelector && !currState.editedByModalRouter) {
+    // If the modal is closed and the current state hasn't been edited, then
+    // it is a new state without a modal.
+    state.lastNoModalUrl = window.location.href;
+  } else if (lastEditedState) {
+    // For all other cases the lastNoModalUrl is the same as from previous states.
+    state.lastNoModalUrl = lastEditedState.lastNoModalUrl;
+  } else {
+    // It should never come here. There should never be a case when
+    // the modal is open but there is no last edited state or that the modal
+    // is closed and there is a currState edited but not a lastStateEdited.
+    assert(false, 'Unexpected route in modal router.');
+  }
+
+  if (openModalSelector) {
+    state.modalSelector = openModalSelector;
+    state.targetUrl = stateUrl || window.location.href;
+  } else {
+    // If there is no modal open, then the current url is the last
+    // one without a modal.
+    state.modalSelector = null;
+    state.targetUrl = state.lastNoModalUrl;
+  }
+
+  return state;
+}
+
+function replaceState(state) {
+  assert(state && state.targetUrl, 'No state or target URL provided.');
+  window.history.replaceState(state, '', state.targetUrl);
+}
+
+function pushState(state) {
+  assert(state && state.targetUrl, 'No state or target URL provided.');
+  window.history.pushState(state, '', state.targetUrl);
+}
+
+function getCurrentState() {
+  return window.history.state;
+}
+
+// -------- Class and public methods ------------ //
+
 var StateHandler = function () {
   function StateHandler() {
     babelHelpers.classCallCheck(this, StateHandler);
 
     console.log('Statehandler Initialised');
+
+    // Keeping track of the lastEditedState will allow us to make sure
+    // that we never lose a reference to the lastNoModalUrl. Even if a new
+    // null state comes in which has the modal open, we will still be able to
+    // get the lastNoModalUrl from the lastEditedState.
+    this.lastEditedState = null;
   }
 
   babelHelpers.createClass(StateHandler, [{
-    key: 'generateStateObject',
-    value: function generateStateObject(baseObj, stateUrl) {
-      var state = baseObj || {};
-      state.editedByModalRouter = true;
-
-      // The lastNoModalUrl will be the same one as the one from
-      // the state this state will replace.
-      // TODO: When to change the lastNoModalUrl to the current one?
-      var currState = this.getCurrentState() || {};
-      state.lastNoModalUrl = currState.lastNoModalUrl || window.location.href;
-
-      var openModalSelector = utils.getOpenModalSelector();
-      if (openModalSelector) {
-        state.modalSelector = openModalSelector;
-        state.targetUrl = stateUrl || window.location.href;
-      } else {
-        // If there is no modal open, then the current url is the last
-        // one without a modal.
-        state.modalSelector = null;
-        state.targetUrl = state.lastNoModalUrl;
-      }
-
-      return state;
-    }
-  }, {
     key: 'createNewState',
     value: function createNewState(stateUrl) {
-      var newState = this.generateStateObject({}, stateUrl);
-      this.pushState(newState);
+      var newState = generateStateObject(this.lastEditedState, stateUrl);
+      pushState(newState);
+      this.lastEditedState = newState;
     }
   }, {
     key: 'editCurrentState',
     value: function editCurrentState() {
-      var state = this.getCurrentState();
+      var state = getCurrentState();
       if (this.isEdited(state)) {
         return;
       }
-      var newState = this.generateStateObject(state);
-      this.replaceState(newState);
+      var newState = generateStateObject(this.lastEditedState, null, state);
+      replaceState(newState);
+      this.lastEditedState = newState;
     }
   }, {
     key: 'isEdited',
@@ -232,23 +279,6 @@ var StateHandler = function () {
       }
       // Otherwise the state is enforced
       return true;
-    }
-  }, {
-    key: 'replaceState',
-    value: function replaceState(state) {
-      assert(state && state.targetUrl, 'No state or target URL provided.');
-      window.history.replaceState(state, '', state.targetUrl);
-    }
-  }, {
-    key: 'pushState',
-    value: function pushState(state) {
-      assert(state && state.targetUrl, 'No state or target URL provided.');
-      window.history.pushState(state, '', state.targetUrl);
-    }
-  }, {
-    key: 'getCurrentState',
-    value: function getCurrentState() {
-      return window.history.state;
     }
   }]);
   return StateHandler;

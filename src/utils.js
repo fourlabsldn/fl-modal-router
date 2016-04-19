@@ -3,6 +3,7 @@ import assert from './assert';
 
 assert($, 'jQuery not initialised.');
 
+// TODO: this should return a better selector than just an ID.
 function getOpenModalSelector() {
   const pageModalsLiveCol = document.querySelectorAll('.modal');
   const pageModals = Array.from(pageModalsLiveCol);
