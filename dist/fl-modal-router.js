@@ -328,7 +328,6 @@ function modalRouter($) {
   var isInitialised = void 0;
 
   function onHistoryChange(popStateEvent) {
-    console.log('History state change');
     var state = popStateEvent.state;
 
     // Check if it is a state we added stuff to.
@@ -366,7 +365,7 @@ function modalRouter($) {
       var relatedTarget = e.relatedTarget;
       targetUrl = relatedTarget ? relatedTarget.getAttribute('href') : null;
     } else if (e.type === 'hidden') {
-      console.log('hidden');
+      targetUrl = null;
     } else {
       // Should never come here.
       assert(false, 'Error processing modal state. Not shown or hidden.');

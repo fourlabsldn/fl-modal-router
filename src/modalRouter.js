@@ -5,7 +5,6 @@ export default function modalRouter($) {
   let isInitialised;
 
   function onHistoryChange(popStateEvent) {
-    console.log('History state change');
     const state = popStateEvent.state;
 
     // Check if it is a state we added stuff to.
@@ -41,7 +40,7 @@ export default function modalRouter($) {
       const relatedTarget = e.relatedTarget;
       targetUrl = (relatedTarget) ? relatedTarget.getAttribute('href') : null;
     } else if (e.type === 'hidden') {
-      console.log('hidden');
+      targetUrl = null;
     } else {
       // Should never come here.
       assert(false, 'Error processing modal state. Not shown or hidden.');
