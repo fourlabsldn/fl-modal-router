@@ -20,7 +20,8 @@ module.exports = function Gruntfile(grunt) {
         },
       },
       tests: {
-        files: 'tests/**/*.js',
+        files: 'tests-src/**/*.js',
+        tasks: ['build-tests'],
         options: {
           livereload: true,
         },
@@ -43,19 +44,21 @@ module.exports = function Gruntfile(grunt) {
       functional: {
         src: 'dist/fl-modal-router.js',
         options: {
-          specs: 'tests/functional/**/*-specs.js',
-          helpers: ['./tests/helpers/*.js'],
+          specs: 'tests-build/functional/**/*-specs.js',
+          helpers: ['./tests-build/helpers/*.js'],
           vendor: [
+            'bower_components/jquery/dist/jquery.min.js',
             'bower_components/x-div/js/x-div-tester.js',
           ],
         },
       },
       unit: {
-        src: 'src/**/*.js',
+        // src: 'src/**/*.js',
         options: {
-          specs: 'tests/unit/**/*-specs.js',
-          helpers: ['./tests/helpers/*.js'],
+          specs: 'tests-build/unit/**/*-specs.js',
+          helpers: ['./tests-build/helpers/*.js'],
           vendor: [
+            'bower_components/jquery/dist/jquery.min.js',
             'bower_components/x-div/js/x-div-tester.js',
           ],
         },
@@ -76,9 +79,21 @@ module.exports = function Gruntfile(grunt) {
         dest: 'dist/fl-modal-router.js',
         src: 'src/main.js', // Only one source file is permitted
       },
+      testsFunctional: {
+        dest: 'tests-build/functional/functional-specs.js',
+        src: 'tests-src/functional/functional-specs.js',
+      },
+      testsUnit: {
+        dest: 'tests-build/unit/unit-specs.js',
+        src: 'tests-src/unit/unit-specs.js',
+      },
+      testsHelpers: {
+        dest: 'tests-build/helpers/helpers.js',
+        src: 'tests-src/helpers/helpers.js',
+      },
     },
     uglify: {
-      my_target: {
+      build: {
         options: {
           sourceMap: true,
           sourceMapName: 'dist/fl-modal-router.min.map',
@@ -104,10 +119,12 @@ module.exports = function Gruntfile(grunt) {
 
   // Building
   grunt.registerTask('build', ['rollup', 'uglify']);
+  grunt.registerTask('build-tests', ['rollup']);
 
   // Developing & Testing
   grunt.registerTask('dev', [
     'build',
+    'build-tests',
     'jasmine',
     'http-server',
     'open:demo',
@@ -115,12 +132,14 @@ module.exports = function Gruntfile(grunt) {
   ]);
   grunt.registerTask('test-unit', [
     'build',
+    'build-tests',
     'jasmine:unit:build',
     'open:test',
     'watch',
   ]);
   grunt.registerTask('test-functional', [
     'build',
+    'build-tests',
     'jasmine:functional:build',
     'open:test',
     'watch',

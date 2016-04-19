@@ -3,5 +3,5 @@
 describe('My Module', function () {
   'use strict';
 
-  xit('initialises correctly');
+  xit('will do something really cool');
 });
