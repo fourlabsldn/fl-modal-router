@@ -139,8 +139,14 @@ function showModal(modal, targetUrl) {
 
   if (targetUrl) {
     // TODO: use xmlhttpRequest
-    fetch(targetUrl).then(function (data) {
-      return data.text();
+    new Promise(function (resolve, reject) {
+      $.ajax({
+        type: 'get',
+        url: targetUrl,
+        cache: true,
+        success: resolve,
+        failure: reject
+      });
     }).then(function (content) {
       // By the time this finishes loading, the modal may already have
       // disappeared.

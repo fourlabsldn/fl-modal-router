@@ -29,9 +29,17 @@ function showModal(modal, targetUrl) {
   }
 
   if (targetUrl) {
-    // TODO: use xmlhttpRequest
-    fetch(targetUrl)
-    .then((data) => { return data.text(); })
+    // NOTE: the 'request' API does not send cookies with the request,
+    // that's why we are using this one instead.
+    new Promise((resolve, reject) => {
+      $.ajax({
+        type: 'get',
+        url: targetUrl,
+        cache: true,
+        success: resolve,
+        failure: reject,
+      });
+    })
     .then((content) => {
       // By the time this finishes loading, the modal may already have
       // disappeared.
