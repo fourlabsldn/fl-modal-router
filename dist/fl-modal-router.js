@@ -194,11 +194,19 @@ function generateStateObject(lastEditedState, stateUrl, baseObj) {
   } else if (lastEditedState) {
     // For all other cases the lastNoModalUrl is the same as from previous states.
     state.lastNoModalUrl = lastEditedState.lastNoModalUrl;
+  } else if (currState.editedByModalRouter) {
+    // If page is reloaded lastEditedState is lost but currState is preserved,
+    // so let's make use of it.
+    state.lastNoModalUrl = currState.lastNoModalUrl;
   } else {
     // It should never come here. There should never be a case when
     // the modal is open but there is no last edited state or that the modal
     // is closed and there is a currState edited but not a lastStateEdited.
     assert.warn(false, 'Unexpected route in modal router.');
+
+    // However, in the rare case that a page loads with a modal open,
+    // let's make sure to cater for that too.
+    state.lastNoModalUrl = null;
   }
 
   if (openModalSelector) {
@@ -208,19 +216,24 @@ function generateStateObject(lastEditedState, stateUrl, baseObj) {
     // If there is no modal open, then the current url is the last
     // one without a modal.
     state.modalSelector = null;
-    state.targetUrl = state.lastNoModalUrl;
+
+    // For the rare case when we don't have any record of a state with
+    // a url without a modal, let's provide the current URL as a fallback
+    state.targetUrl = state.lastNoModalUrl || window.location.href;
   }
 
   return state;
 }
 
 function replaceState(state) {
-  assert(state && state.targetUrl, 'No state or target URL provided.');
+  assert(state, 'No state provided.');
+  assert(state.targetUrl, 'No target URL provided.');
   window.history.replaceState(state, '', state.targetUrl);
 }
 
 function pushState(state) {
-  assert(state && state.targetUrl, 'No state or target URL provided.');
+  assert(state, 'No state provided.');
+  assert(state.targetUrl, 'No target URL provided.');
   window.history.pushState(state, '', state.targetUrl);
 }
 
@@ -233,8 +246,6 @@ function getCurrentState() {
 var StateHandler = function () {
   function StateHandler() {
     babelHelpers.classCallCheck(this, StateHandler);
-
-    console.log('Statehandler Initialised');
 
     // Keeping track of the lastEditedState will allow us to make sure
     // that we never lose a reference to the lastNoModalUrl. Even if a new
