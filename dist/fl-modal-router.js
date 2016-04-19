@@ -37,9 +37,9 @@ function processCondition(condition, errorMessage) {
     // really interested is in who is calling the assert function.
     var assertFunction = processCondition.caller;
 
-    if (!assertFunction || !assertFunction.caller) {
+    if (!assertFunction) {
       // The program should never ever ever come here.
-      throw new Error('No callers for "assert" function?');
+      throw new Error('No "assert" function as a caller?');
     }
 
     if (assertFunction.caller && assertFunction.caller.name) {
