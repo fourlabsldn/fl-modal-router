@@ -8,7 +8,7 @@ module.exports = function Gruntfile(grunt) {
         path: 'http://localhost:8282/demo/index.html',
       },
       test: {
-        path: './_SpecRunner.html',
+        path: 'http://localhost:8282/_SpecRunner.html',
       },
     },
     watch: {
@@ -138,6 +138,7 @@ module.exports = function Gruntfile(grunt) {
     'build',
     'build-tests',
     'jasmine:unit:build',
+    'http-server',
     'open:test',
     'watch',
   ]);
@@ -145,6 +146,7 @@ module.exports = function Gruntfile(grunt) {
     'build',
     'build-tests',
     'jasmine:functional:build',
+    'http-server',
     'open:test',
     'watch',
   ]);

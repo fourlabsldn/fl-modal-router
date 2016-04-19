@@ -324,6 +324,86 @@ var StateHandler = function () {
 
 var stateHandler = new StateHandler();
 
+function modalRouter($) {
+  var isInitialised = void 0;
+
+  function onHistoryChange(popStateEvent) {
+    var state = popStateEvent.state;
+
+    // Check if it is a state we added stuff to.
+    if (!stateHandler.isEdited(state)) {
+      // If it is not, then let's fill it with data about its
+      // current state.
+      stateHandler.editCurrentState();
+    } else {
+      // if it is, then let's make sure that the state of things
+      // is the way it should be.
+      stateHandler.enforceState(state);
+    }
+  }
+
+  function onModalStateChange(e) {
+    var state = window.history.state;
+    assert(typeof state !== 'undefined', 'Unable to retrieve window state.');
+
+    // First, the current window state should already have been edited by
+    // our state handler. If it wasn't, then we have a bug.
+    assert(stateHandler.isEdited(state), 'State should already have been edited.');
+
+    // Let's check whether it was shown or hidden to enforce a state change.
+    // If it was, the state is already enforced and there is nothing else to do.
+    if (stateHandler.isEnforced(state)) {
+      return;
+    }
+
+    // If it wasn't shown to enforce a state, then we need to create
+    // a new History state to accomodate this modal state.
+    var targetUrl = void 0;
+    if (e.type === 'shown') {
+      // If the modal is being shown our targetURL will be the modal's
+      // remote URL, if it is loading one.
+      var relatedTarget = e.relatedTarget;
+      targetUrl = relatedTarget ? relatedTarget.getAttribute('href') : null;
+    } else if (e.type === 'hidden') {
+      targetUrl = null;
+    } else {
+      // Should never come here.
+      assert(false, 'Error processing modal state. Not shown or hidden.');
+    }
+
+    // Now we are ready to create the new state with the right URL
+    stateHandler.createNewState(targetUrl);
+  }
+
+  function init() {
+    // Set initialisation state
+    if (isInitialised) {
+      return;
+    }
+    isInitialised = true;
+
+    // Check if body was loaded, if it wasn't then come back when it has;
+    var body = document.body;
+    if (!body) {
+      isInitialised = false;
+      window.addEventListener('load', init);
+      return;
+    }
+
+    var $body = $(document.body);
+    window.addEventListener('popstate', onHistoryChange);
+    $body.on('shown.bs.modal', onModalStateChange);
+    $body.on('hidden.bs.modal', onModalStateChange);
+
+    // Edit current state to start.
+    stateHandler.editCurrentState();
+  }
+
+  return {
+    init: init
+  };
+}
+
 function assertSpecs() {
   describe('assert function should', function () {
     it('throw when given a false value and an empty string', function () {
@@ -418,4 +498,65 @@ function assertSpecs() {
   });
 }
 
+var NEW_STATE_EVENT = 'popstate';
+var OPEN_MODAL_EVENT = 'shown.bs.modal';
+var CLOSE_MODAL_EVENT = 'hidden.bs.modal';
+
+function modalRouterSpecs() {
+  describe('The modalRouter function should', function () {
+    beforeEach(function (done) {
+      spyOn(stateHandler, 'editCurrentState');
+      spyOn(stateHandler, 'createNewState');
+      done();
+    });
+
+    it('edit the current state when initialising', function (done) {
+      var router = modalRouter(jQuery);
+      router.init();
+      expect(stateHandler.editCurrentState.calls.count()).toEqual(1);
+      done();
+    });
+
+    it('edit the current state when a new state is pushed', function (done) {
+      function myListener() {
+        expect(stateHandler.editCurrentState.calls.count()).toEqual(1);
+        done();
+        window.removeEventListener(NEW_STATE_EVENT, myListener);
+      }
+      // This is assuming that the modalRouter module will be called before our listener.
+      window.addEventListener(NEW_STATE_EVENT, myListener);
+      var ev = new Event(NEW_STATE_EVENT);
+      window.dispatchEvent(ev);
+    });
+
+    xit('create a new state when a modal is open', function (done) {
+      var $body = $(document.body);
+      function myListener() {
+        $body.off(OPEN_MODAL_EVENT, myListener);
+        expect(stateHandler.createNewState.calls.count()).toEqual(1);
+        done();
+      }
+
+      // This is assuming that the modalRouter module will be called before our listener.
+      $body.on(OPEN_MODAL_EVENT, myListener);
+      $body.trigger(OPEN_MODAL_EVENT);
+    });
+
+    xit('create a new state when a modal is closed', function (done) {
+      var $body = $(document.body);
+      function myListener() {
+        $body.off(CLOSE_MODAL_EVENT, myListener);
+        expect(stateHandler.createNewState.calls.count()).toEqual(1);
+        done();
+      }
+      // This is assuming that the modalRouter module will be called before our listener.
+      // This is assuming that the modalRouter module will be called before our listener.
+      $body.on(CLOSE_MODAL_EVENT, myListener);
+      $body.trigger(CLOSE_MODAL_EVENT);
+    });
+  });
+}
+
 assertSpecs();
+
+modalRouterSpecs();
