@@ -28,19 +28,46 @@ babelHelpers;
 
 // Bug checking function that will throw an error whenever
 // the condition sent to it is evaluated to false
-function assert(condition, errorMessage) {
 
+function processCondition(condition, errorMessage) {
   if (!condition) {
     var completeErrorMessage = '';
 
-    if (assert.caller && assert.caller.name) {
-      completeErrorMessage = assert.caller.name + ': ';
+    // The assert function is calling this processCondition and we are
+    // really interested is in who is calling the assert function.
+    var assertFunction = processCondition.caller;
+
+    if (!assertFunction || !assertFunction.caller) {
+      // The program should never ever ever come here.
+      throw new Error('No callers for "assert" function?');
+    }
+
+    if (assertFunction.caller && assertFunction.caller.name) {
+      completeErrorMessage = assertFunction.caller.name + ': ';
     }
 
     completeErrorMessage += errorMessage;
-    throw new Error(completeErrorMessage);
+    return completeErrorMessage;
+  }
+
+  return null;
+}
+
+function assert() {
+  var error = processCondition.apply(undefined, arguments);
+  if (error) {
+    throw new Error(error);
   }
 }
+
+assert.warn = function warn() {
+  var error = processCondition.apply(undefined, arguments);
+  if (error) {
+    console.warn(error);
+  }
+};
+
+assert($, 'jQuery not initialised.');
 
 // TODO: this should return a better selector than just an ID.
 function getOpenModalSelector() {
@@ -171,7 +198,7 @@ function generateStateObject(lastEditedState, stateUrl, baseObj) {
     // It should never come here. There should never be a case when
     // the modal is open but there is no last edited state or that the modal
     // is closed and there is a currState edited but not a lastStateEdited.
-    assert(false, 'Unexpected route in modal router.');
+    assert.warn(false, 'Unexpected route in modal router.');
   }
 
   if (openModalSelector) {

@@ -32,7 +32,7 @@ function generateStateObject(lastEditedState, stateUrl, baseObj) {
     // It should never come here. There should never be a case when
     // the modal is open but there is no last edited state or that the modal
     // is closed and there is a currState edited but not a lastStateEdited.
-    assert(false, 'Unexpected route in modal router.');
+    assert.warn(false, 'Unexpected route in modal router.');
   }
 
   if (openModalSelector) {
