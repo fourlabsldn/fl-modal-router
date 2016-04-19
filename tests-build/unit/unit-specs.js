@@ -55,14 +55,14 @@ function processCondition(condition, errorMessage) {
 
 function assert() {
   var error = processCondition.apply(undefined, arguments);
-  if (error) {
+  if (typeof error === 'string') {
     throw new Error(error);
   }
 }
 
 assert.warn = function warn() {
   var error = processCondition.apply(undefined, arguments);
-  if (error) {
+  if (typeof error === 'string') {
     console.warn(error);
   }
 };
@@ -324,94 +324,98 @@ var StateHandler = function () {
 
 var stateHandler = new StateHandler();
 
-function modalRouter($) {
-  var isInitialised = void 0;
+function assertSpecs() {
+  describe('assert function should', function () {
+    it('throw when given a false value and an empty string', function () {
+      expect(function () {
+        assert(false, '');
+      }).toThrow();
+    });
 
-  function onHistoryChange(popStateEvent) {
-    var state = popStateEvent.state;
+    it('throw when given a false value and a non-empty string', function () {
+      expect(function () {
+        assert(false, 'asdf');
+      }).toThrow();
+    });
 
-    // Check if it is a state we added stuff to.
-    if (!stateHandler.isEdited(state)) {
-      // If it is not, then let's fill it with data about its
-      // current state.
-      stateHandler.editCurrentState();
-    } else {
-      // if it is, then let's make sure that the state of things
-      // is the way it should be.
-      stateHandler.enforceState(state);
-    }
-  }
+    it('throw when given a false value and no second parameter', function () {
+      expect(function () {
+        assert(false);
+      }).toThrow();
+    });
 
-  function onModalStateChange(e) {
-    var state = window.history.state;
-    assert(typeof state !== 'undefined', 'Unable to retrieve window state.');
+    it('provide the appropriate error message', function () {
+      var errorMsg = 'my error message';
+      try {
+        assert(false, errorMsg);
+      } catch (e) {
+        expect(e.message).toContain(errorMsg);
+      }
+    });
 
-    // First, the current window state should already have been edited by
-    // our state handler. If it wasn't, then we have a bug.
-    assert(stateHandler.isEdited(state), 'State should already have been edited.');
+    it('not throw when given a true value and a non-empty error message', function () {
+      expect(function () {
+        return assert(true, 'asfd');
+      }).not.toThrow();
+    });
 
-    // Let's check whether it was shown or hidden to enforce a state change.
-    // If it was, the state is already enforced and there is nothing else to do.
-    if (stateHandler.isEnforced(state)) {
-      return;
-    }
+    it('not throw when given a true value and an empty error message', function () {
+      expect(function () {
+        return assert(true, 'asfd');
+      }).not.toThrow();
+    });
 
-    // If it wasn't shown to enforce a state, then we need to create
-    // a new History state to accomodate this modal state.
-    var targetUrl = void 0;
-    if (e.type === 'shown') {
-      // If the modal is being shown our targetURL will be the modal's
-      // remote URL, if it is loading one.
-      var relatedTarget = e.relatedTarget;
-      targetUrl = relatedTarget ? relatedTarget.getAttribute('href') : null;
-    } else if (e.type === 'hidden') {
-      targetUrl = null;
-    } else {
-      // Should never come here.
-      assert(false, 'Error processing modal state. Not shown or hidden.');
-    }
-
-    // Now we are ready to create the new state with the right URL
-    stateHandler.createNewState(targetUrl);
-  }
-
-  function init() {
-    // Set initialisation state
-    if (isInitialised) {
-      return;
-    }
-    isInitialised = true;
-
-    // Check if body was loaded, if it wasn't then come back when it has;
-    var body = document.body;
-    if (!body) {
-      isInitialised = false;
-      window.addEventListener('load', init);
-      return;
-    }
-
-    var $body = $(document.body);
-    window.addEventListener('popstate', onHistoryChange);
-    $body.on('shown.bs.modal', onModalStateChange);
-    $body.on('hidden.bs.modal', onModalStateChange);
-
-    // Edit current state to start.
-    stateHandler.editCurrentState();
-  }
-
-  return {
-    init: init
-  };
-}
-
-describe('My Module', function () {
-  console.dir({
-    assert: assert,
-    modalRouter: modalRouter,
-    stateHandler: stateHandler,
-    utils: utils
+    it('not throw when given a true value and no error message', function () {
+      expect(function () {
+        return assert(true);
+      }).not.toThrow();
+    });
   });
 
-  'use strict';
-  xit('initialises correctly');
-});
+  describe('assert.warn function should', function () {
+    beforeEach(function () {
+      spyOn(console, 'warn');
+    });
+
+    it('warn when given a false value and an empty string', function () {
+      assert.warn(false, '');
+      expect(console.warn.calls.count()).toEqual(1);
+    });
+
+    it('warn when given a false value and a non-empty string', function () {
+      assert.warn(false, 'asdf');
+      expect(console.warn.calls.count()).toEqual(1);
+    });
+
+    it('warn when given a false value and no second parameter', function () {
+      assert.warn(false);
+      expect(console.warn.calls.count()).toEqual(1);
+    });
+
+    it('provide the appropriate warning message', function () {
+      var warningMsg = 'my error message';
+      assert.warn(false, warningMsg);
+      expect(console.warn.calls.count()).toEqual(1);
+      var warningThrown = console.warn.calls.argsFor(0);
+
+      expect(warningThrown[0]).toContain(warningMsg);
+    });
+
+    it('not warn when given a true value and a non-empty error message', function () {
+      assert.warn(true, 'asfd');
+      expect(console.warn.calls.count()).toEqual(0);
+    });
+
+    it('not warn when given a true value and an empty error message', function () {
+      assert.warn(true, 'asfd');
+      expect(console.warn.calls.count()).toEqual(0);
+    });
+
+    it('not warn when given a true value and no error message', function () {
+      assert.warn(true);
+      expect(console.warn.calls.count()).toEqual(0);
+    });
+  });
+}
+
+assertSpecs();

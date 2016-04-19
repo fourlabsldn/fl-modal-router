@@ -55,14 +55,14 @@ function processCondition(condition, errorMessage) {
 
 function assert() {
   var error = processCondition.apply(undefined, arguments);
-  if (error) {
+  if (typeof error === 'string') {
     throw new Error(error);
   }
 }
 
 assert.warn = function warn() {
   var error = processCondition.apply(undefined, arguments);
-  if (error) {
+  if (typeof error === 'string') {
     console.warn(error);
   }
 };

@@ -118,8 +118,12 @@ module.exports = function Gruntfile(grunt) {
   grunt.registerTask('demo', ['open:demo']);
 
   // Building
-  grunt.registerTask('build', ['rollup', 'uglify']);
-  grunt.registerTask('build-tests', ['rollup']);
+  grunt.registerTask('build', ['rollup:', 'uglify']);
+  grunt.registerTask('build-tests', [
+    'rollup:testsFunctional',
+    'rollup:testsUnit',
+    'rollup:testsHelpers',
+  ]);
 
   // Developing & Testing
   grunt.registerTask('dev', [
@@ -144,5 +148,5 @@ module.exports = function Gruntfile(grunt) {
     'open:test',
     'watch',
   ]);
-  grunt.registerTask('test', ['jasmine']);
+  grunt.registerTask('test', ['build', 'build-tests', 'jasmine']);
 };
