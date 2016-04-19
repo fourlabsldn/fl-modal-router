@@ -11,61 +11,7 @@ module.exports = function Gruntfile(grunt) {
         path: './_SpecRunner.html',
       },
     },
-    // concat: {
-    //   options: {
-    //     banner: '(function () {',
-    //     footer: '}());',
-    //     separator: '\n',
-    //   },
-    //   dist: {
-    //     src: [
-    //       'src/utils.js',
-    //       'src/*.js',
-    //     ],
-    //     dest: 'dist/fl-modal-router.js',
-    //   },
-    // },
-    sass: {
-      dist: {
-        options: {
-          style: 'expanded',
-        },
-        files: {
-          'dist/fl-modal-router.css': 'src/**/*.scss',
-        },
-      },
-    },
-    postcss: {
-      options: {
-        processors: [
-          require('autoprefixer')({
-            browsers: ['last 2 versions'],
-          }),
-        ],
-      },
-      dist: {
-        src: 'dist/*.css',
-      },
-    },
-    // uglify: {
-    //   main: {
-    //     options: {
-    //       sourceMap: true,
-    //       sourceMapName: 'dist/fl-modal-router.map',
-    //     },
-    //     files: {
-    //       'dist/fl-modal-router.min.js': ['dist/fl-modal-router.js'],
-    //     },
-    //   },
-    // },
     watch: {
-      css: {
-        files: 'src/**/*.sass',
-        tasks: ['css-build'],
-        options: {
-          livereload: true,
-        },
-      },
       js: {
         files: 'src/**/*.js',
         tasks: ['js-build'],
@@ -131,15 +77,23 @@ module.exports = function Gruntfile(grunt) {
         src: 'src/main.js', // Only one source file is permitted
       },
     },
+    uglify: {
+      my_target: {
+        options: {
+          sourceMap: true,
+          sourceMapName: 'dist/fl-modal-router.min.map',
+        },
+        files: {
+          'dist/fl-modal-router.min.js': ['dist/fl-modal-router.js'],
+        },
+      },
+    },
   });
 
   grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-rollup');
-  grunt.loadNpmTasks('grunt-postcss');
   grunt.loadNpmTasks('grunt-http-server');
-  grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
 
@@ -149,10 +103,7 @@ module.exports = function Gruntfile(grunt) {
   grunt.registerTask('demo', ['open:demo']);
 
   // Building
-  // grunt.registerTask('js-build', ['rollup', 'uglify']);
-  grunt.registerTask('js-build', ['rollup']);
-  grunt.registerTask('css-build', ['sass', 'postcss']);
-  grunt.registerTask('build', ['js-build', 'css-build']);
+  grunt.registerTask('build', ['rollup', 'uglify']);
 
   // Developing & Testing
   grunt.registerTask('dev', [
