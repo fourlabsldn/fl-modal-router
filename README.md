@@ -11,3 +11,7 @@
 ```
 npm run dev
 ```
+# Demo
+```
+npm run demo
+```
