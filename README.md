@@ -11,3 +11,9 @@
 ```
 npm run dev
 ```
+
+# Install
+## Bower
+```
+bower install fl-modal-router --save
+```
