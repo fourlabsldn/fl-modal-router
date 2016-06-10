@@ -4,6 +4,7 @@
   "description": "Map URLs to modals",
   "main": "index.js",
   "scripts": {
+    "start": "grunt demo",
     "test": "grunt test",
     "demo": "grunt demo",
     "dev": "grunt dev",

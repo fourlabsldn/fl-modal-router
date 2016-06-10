@@ -34,7 +34,7 @@ module.exports = function Gruntfile(grunt) {
         showDir: true,
         autoIndex: true,
         ext: 'html',
-        runInBackground: true,
+        runInBackground: false,
         customPages: {
           '/readme': 'README.md',
         },
@@ -69,6 +69,11 @@ module.exports = function Gruntfile(grunt) {
         plugins: () => {
           return [
             babel({
+              // Function names leak to the global namespace. To avoid that,
+              // let's just put everything within an immediate function, this way variables
+              // are all beautifully namespaced.
+              banner: '(function () {',
+              footer: '}());',
               exclude: './node_modules/**',
               presets: ['es2015-rollup'],
             }),
@@ -115,7 +120,7 @@ module.exports = function Gruntfile(grunt) {
   grunt.registerTask('default', []);
 
   // Showing demo
-  grunt.registerTask('demo', ['open:demo']);
+  grunt.registerTask('demo', ['open:demo', 'http-server']);
 
   // Building
   grunt.registerTask('build', ['rollup:', 'uglify']);
