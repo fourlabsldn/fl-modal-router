@@ -1,3 +1,4 @@
+(function () {
 function liveReload() {
   'use strict';
 
@@ -7,3 +8,4 @@ function liveReload() {
 }
 
 liveReload();
+}());

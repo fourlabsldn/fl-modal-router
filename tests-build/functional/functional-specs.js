@@ -1,3 +1,4 @@
+(function () {
 /*globals xDivTester*/
 
 describe('My Module', function () {
@@ -5,3 +6,4 @@ describe('My Module', function () {
 
   xit('will do something really cool');
 });
+}());

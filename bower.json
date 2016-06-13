@@ -19,5 +19,8 @@
   "devDependencies": {
     "x-div": "~1.0.3",
     "bootstrap": "~3.3.6"
+  },
+  "dependencies": {
+    "jquery": "^3.0.0"
   }
 }

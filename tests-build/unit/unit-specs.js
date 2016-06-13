@@ -1,31 +1,4 @@
-var babelHelpers = {};
-
-babelHelpers.classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-babelHelpers.createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-
-babelHelpers;
-
+(function () {
 // Bug checking function that will throw an error whenever
 // the condition sent to it is evaluated to false
 
@@ -138,7 +111,8 @@ function showModal(modal, targetUrl) {
   }
 
   if (targetUrl) {
-    // TODO: use xmlhttpRequest
+    // NOTE: the 'request' API does not send cookies with the request,
+    // that's why we are using this one instead.
     new Promise(function (resolve, reject) {
       $.ajax({
         type: 'get',
@@ -172,6 +146,30 @@ var utils = {
   hideModal: hideModal,
   showModal: showModal
 };
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
 
 // -------- Private methods ------------ //
 /**
@@ -251,7 +249,7 @@ function getCurrentState() {
 
 var StateHandler = function () {
   function StateHandler() {
-    babelHelpers.classCallCheck(this, StateHandler);
+    classCallCheck(this, StateHandler);
 
     // Keeping track of the lastEditedState will allow us to make sure
     // that we never lose a reference to the lastNoModalUrl. Even if a new
@@ -260,7 +258,7 @@ var StateHandler = function () {
     this.lastEditedState = null;
   }
 
-  babelHelpers.createClass(StateHandler, [{
+  createClass(StateHandler, [{
     key: 'createNewState',
     value: function createNewState(stateUrl) {
       var newState = generateStateObject(this.lastEditedState, stateUrl);
@@ -566,3 +564,4 @@ function modalRouterSpecs() {
 assertSpecs();
 
 modalRouterSpecs();
+}());
