@@ -18,9 +18,8 @@
   ],
   "devDependencies": {
     "x-div": "~1.0.3",
-    "bootstrap": "~3.3.6"
+    "bootstrap": "~3.3.6",
+    "jquery": ">= 2.0.0"
   },
-  "dependencies": {
-    "jquery": "^3.0.0"
-  }
+  "dependencies": {}
 }
