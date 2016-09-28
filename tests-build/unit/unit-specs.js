@@ -42,6 +42,10 @@ assert.warn = function warn() {
 
 assert($, 'jQuery not initialised.');
 
+function modalIsOpen(modal) {
+  return window.getComputedStyle(modal).display !== 'none';
+}
+
 // TODO: this should return a better selector than just an ID.
 function getOpenModalSelector() {
   var pageModalsLiveCol = document.querySelectorAll('.modal');
@@ -54,8 +58,7 @@ function getOpenModalSelector() {
     for (var _iterator = pageModals[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var modal = _step.value;
 
-      // Check whether the modal is open.
-      if (modal.classList.contains('in')) {
+      if (modalIsOpen(modal)) {
         // If it is open, then return its id.
         return '#' + modal.id;
       }

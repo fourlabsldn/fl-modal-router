@@ -16,22 +16,22 @@
 
   <div class="row text-center">
       <h3>Modal 1</h3>
-      <a href="modal1.html" class="btn btn-lg btn-success" data-toggle="modal" data-target="#largeModal">Click to open Modal</a>
+      <a href="./modal1.html" class="btn btn-lg btn-success" data-toggle="modal" data-target="#largeModal">Click to open Modal</a>
   </div>
   <hr>
   <div class="row text-center">
       <h3>Modal 2</h3>
-      <a href="modal2.html" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#largeModal">Click to open Modal</a>
+      <a href="./modal2.html" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#largeModal">Click to open Modal</a>
   </div>
   <hr>
   <div class="row text-center">
       <h3>Modal 3</h3>
-      <a href="modal3.html" class="btn btn-lg btn-danger" data-toggle="modal" data-target="#largeModal">Click to open Modal</a>
+      <a href="./modal3.html" class="btn btn-lg btn-danger" data-toggle="modal" data-target="#largeModal">Click to open Modal</a>
   </div>
   <hr>
   <div class="row text-center">
       <h3>Tabs Modal</h3>
-      <a href="tabs.html" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#largeModal" data-remote="false">Click to open Modal</a>
+      <a href="./tabs.html" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#largeModal" data-remote="false">Click to open Modal</a>
   </div>
 </div>
 
@@ -69,7 +69,7 @@ $("#largeModal").on("show.bs.modal", function(e) {
   if (e.relatedTarget) {
     var link = e.relatedTarget.getAttribute('href');
     var modalBody = this.querySelector(".modal-content");
-    fetch(link)
+    fetch(link, { mode: 'no-cors' })
     .then(function (data) {
       return data.text();
     })

@@ -3,13 +3,16 @@ import assert from './assert';
 
 assert($, 'jQuery not initialised.');
 
+function modalIsOpen(modal) {
+  return window.getComputedStyle(modal).display !== 'none';
+}
+
 // TODO: this should return a better selector than just an ID.
 function getOpenModalSelector() {
   const pageModalsLiveCol = document.querySelectorAll('.modal');
   const pageModals = Array.from(pageModalsLiveCol);
   for (const modal of pageModals) {
-    // Check whether the modal is open.
-    if (modal.classList.contains('in')) {
+    if (modalIsOpen(modal)) {
       // If it is open, then return its id.
       return `#${modal.id}`;
     }
