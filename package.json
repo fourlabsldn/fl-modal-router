@@ -3,31 +3,14 @@
   "version": "0.0.11",
   "description": "Map URLs to modals",
   "main": "index.js",
-  "scripts": {
-    "start": "grunt demo",
-    "test": "grunt test",
-    "demo": "grunt demo",
-    "dev": "grunt dev",
-    "build": "grunt build"
-  },
+  "scripts": {},
   "author": "lazamar @ FourLabs",
   "license": "ISC",
   "devDependencies": {
-    "autoprefixer": "^6.3.4",
-    "babel-preset-es2015-rollup": "^1.1.1",
-    "bower": "^1.7.7",
-    "grunt": "^0.4.5",
-    "grunt-cli": "^1.1.0",
-    "grunt-contrib-concat": "^1.0.0",
-    "grunt-contrib-jasmine": "^1.0.0",
-    "grunt-contrib-sass": "^1.0.0",
-    "grunt-contrib-uglify": "^1.0.1",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-http-server": "^1.14.0",
-    "grunt-open": "^0.2.3",
-    "grunt-postcss": "^0.8.0",
-    "grunt-rollup": "^0.7.1",
-    "rollup-plugin-babel": "^2.4.0"
+    "elm": "^0.17.1",
+    "gulp": "^3.9.1",
+    "gulp-organiser": "^1.0.6",
+    "gulp-shell": "^0.5.2"
   },
   "directories": {
     "test": "tests"
