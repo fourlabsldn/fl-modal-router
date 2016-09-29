@@ -19,45 +19,47 @@ main =
 -- MODEL
 
 type alias Model =
-  { word : String
-  , suggestions : List String
+  { message : String
   }
 
 init : (Model, Cmd Msg)
 init =
-  (Model "" [], Cmd.none)
+  (Model "", Cmd.none)
 
 
 -- UPDATE
 
 type Msg
-  = Change String
-  | Check
-  | Suggest (List String)
-
-
-port check : String -> Cmd msg
+  = PopState String
+  | ModalOpen String
+  | ModalClose String
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Change newWord ->
-      ( Model newWord [], Cmd.none )
+    PopState eventMsg ->
+      ( Model ("Popstate invoked: " ++ eventMsg), Cmd.none )
 
-    Check ->
-      ( model, check model.word )
+    ModalOpen eventMsg ->
+      ( Model ("Modal was open: " ++ eventMsg), Cmd.none )
 
-    Suggest newSuggestions ->
-      ( Model model.word newSuggestions, Cmd.none )
+    ModalClose eventMsg ->
+      ( Model ("Modal was closed: " ++ eventMsg), Cmd.none )
 
+--
 
 -- SUBSCRIPTIONS
-
-port suggestions : (List String -> msg) -> Sub msg
+port popstate : (String -> msg) -> Sub msg
+port modalOpen : (String -> msg) -> Sub msg
+port modalClose : (String -> msg) -> Sub msg
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  suggestions Suggest
+   Sub.batch
+        [ popstate PopState
+        , modalOpen ModalOpen
+        , modalClose ModalClose
+        ]
 
 
 -- VIEW
@@ -65,7 +67,5 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
   div []
-    [ input [ onInput Change ] []
-    , button [ onClick Check ] [ text "Check" ]
-    , div [] [ text (String.join ", " model.suggestions) ]
+    [ text model.message
     ]
