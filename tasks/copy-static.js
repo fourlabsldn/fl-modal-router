@@ -5,7 +5,7 @@ const { map, reduce, get, uniqBy, flow, filter } = require('lodash/fp');
 module.exports = organiser.register((task, allTasks) => {
   // All paths with an src
   const excludePaths = getExcludedPaths(task, allTasks);
-  const folderMapping = task.map;
+  const folderMapping = task.map || {};
 
   gulp.task(task.name, () => {
     const mapped = Object.keys(folderMapping);
