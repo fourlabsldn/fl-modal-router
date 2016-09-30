@@ -1,0 +1,222 @@
+var _user$project$ModalRouter$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+};
+var _user$project$ModalRouter$modalUrlToPageUrl = function (modalUrl) {
+	return modalUrl;
+};
+var _user$project$ModalRouter$placeholderUrl = 'placeholderUrl';
+var _user$project$ModalRouter$onPopState = _elm_lang$core$Native_Platform.incomingPort(
+	'onPopState',
+	_elm_lang$core$Json_Decode$oneOf(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+				A2(
+				_elm_lang$core$Json_Decode$map,
+				_elm_lang$core$Maybe$Just,
+				A2(
+					_elm_lang$core$Json_Decode$andThen,
+					A2(
+						_elm_lang$core$Json_Decode_ops[':='],
+						'modal',
+						_elm_lang$core$Json_Decode$oneOf(
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+									A2(
+									_elm_lang$core$Json_Decode$map,
+									_elm_lang$core$Maybe$Just,
+									A2(
+										_elm_lang$core$Json_Decode$andThen,
+										A2(_elm_lang$core$Json_Decode_ops[':='], 'modalSelector', _elm_lang$core$Json_Decode$string),
+										function (modalSelector) {
+											return A2(
+												_elm_lang$core$Json_Decode$andThen,
+												A2(
+													_elm_lang$core$Json_Decode_ops[':='],
+													'targetUrl',
+													_elm_lang$core$Json_Decode$oneOf(
+														_elm_lang$core$Native_List.fromArray(
+															[
+																_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+																A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string)
+															]))),
+												function (targetUrl) {
+													return _elm_lang$core$Json_Decode$succeed(
+														{modalSelector: modalSelector, targetUrl: targetUrl});
+												});
+										}))
+								]))),
+					function (modal) {
+						return A2(
+							_elm_lang$core$Json_Decode$andThen,
+							A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
+							function (url) {
+								return _elm_lang$core$Json_Decode$succeed(
+									{modal: modal, url: url});
+							});
+					}))
+			])));
+var _user$project$ModalRouter$onModalOpen = _elm_lang$core$Native_Platform.incomingPort(
+	'onModalOpen',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'modalSelector', _elm_lang$core$Json_Decode$string),
+		function (modalSelector) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				A2(
+					_elm_lang$core$Json_Decode_ops[':='],
+					'targetUrl',
+					_elm_lang$core$Json_Decode$oneOf(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+								A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string)
+							]))),
+				function (targetUrl) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{modalSelector: modalSelector, targetUrl: targetUrl});
+				});
+		}));
+var _user$project$ModalRouter$onModalClose = _elm_lang$core$Native_Platform.incomingPort('onModalClose', _elm_lang$core$Json_Decode$string);
+var _user$project$ModalRouter$openModal = _elm_lang$core$Native_Platform.outgoingPort(
+	'openModal',
+	function (v) {
+		return v;
+	});
+var _user$project$ModalRouter$closeModal = _elm_lang$core$Native_Platform.outgoingPort(
+	'closeModal',
+	function (v) {
+		return v;
+	});
+var _user$project$ModalRouter$pushHistoryState = _elm_lang$core$Native_Platform.outgoingPort(
+	'pushHistoryState',
+	function (v) {
+		return {
+			modal: (v.modal.ctor === 'Nothing') ? null : {
+				modalSelector: v.modal._0.modalSelector,
+				targetUrl: (v.modal._0.targetUrl.ctor === 'Nothing') ? null : v.modal._0.targetUrl._0
+			},
+			url: v.url
+		};
+	});
+var _user$project$ModalRouter$replaceHistoryState = _elm_lang$core$Native_Platform.outgoingPort(
+	'replaceHistoryState',
+	function (v) {
+		return {
+			modal: (v.modal.ctor === 'Nothing') ? null : {
+				modalSelector: v.modal._0.modalSelector,
+				targetUrl: (v.modal._0.targetUrl.ctor === 'Nothing') ? null : v.modal._0.targetUrl._0
+			},
+			url: v.url
+		};
+	});
+var _user$project$ModalRouter$applyState = function (state) {
+	return _elm_lang$core$Platform_Cmd$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$ModalRouter$replaceHistoryState(state),
+				function () {
+				var _p0 = state.modal;
+				if (_p0.ctor === 'Nothing') {
+					return _elm_lang$core$Platform_Cmd$none;
+				} else {
+					return _user$project$ModalRouter$openModal(_p0._0.modalSelector);
+				}
+			}()
+			]));
+};
+var _user$project$ModalRouter$ModalInfo = F2(
+	function (a, b) {
+		return {modalSelector: a, targetUrl: b};
+	});
+var _user$project$ModalRouter$HistoryState = F2(
+	function (a, b) {
+		return {modal: a, url: b};
+	});
+var _user$project$ModalRouter$createStateWithoutModal = function (url) {
+	return _user$project$ModalRouter$pushHistoryState(
+		A2(_user$project$ModalRouter$HistoryState, _elm_lang$core$Maybe$Nothing, url));
+};
+var _user$project$ModalRouter$createStateWithModal = function (modal) {
+	var url = function () {
+		var _p1 = modal.targetUrl;
+		if (_p1.ctor === 'Nothing') {
+			return _user$project$ModalRouter$placeholderUrl;
+		} else {
+			return _user$project$ModalRouter$modalUrlToPageUrl(_p1._0);
+		}
+	}();
+	return _user$project$ModalRouter$pushHistoryState(
+		A2(
+			_user$project$ModalRouter$HistoryState,
+			_elm_lang$core$Maybe$Just(modal),
+			url));
+};
+var _user$project$ModalRouter$setCurrentState = function (url) {
+	return _user$project$ModalRouter$replaceHistoryState(
+		A2(_user$project$ModalRouter$HistoryState, _elm_lang$core$Maybe$Nothing, url));
+};
+var _user$project$ModalRouter$Model = {};
+var _user$project$ModalRouter$init = {ctor: '_Tuple2', _0: _user$project$ModalRouter$Model, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$ModalRouter$update = F2(
+	function (msg, model) {
+		var _p2 = msg;
+		switch (_p2.ctor) {
+			case 'PopState':
+				var _p3 = _p2._0;
+				if (_p3.ctor === 'Nothing') {
+					return {
+						ctor: '_Tuple2',
+						_0: _user$project$ModalRouter$Model,
+						_1: _user$project$ModalRouter$setCurrentState(_user$project$ModalRouter$placeholderUrl)
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _user$project$ModalRouter$Model,
+						_1: _user$project$ModalRouter$applyState(_p3._0)
+					};
+				}
+			case 'ModalOpen':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$ModalRouter$Model,
+					_1: _user$project$ModalRouter$createStateWithModal(_p2._0)
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$ModalRouter$Model,
+					_1: _user$project$ModalRouter$createStateWithoutModal(_user$project$ModalRouter$placeholderUrl)
+				};
+		}
+	});
+var _user$project$ModalRouter$ModalClose = function (a) {
+	return {ctor: 'ModalClose', _0: a};
+};
+var _user$project$ModalRouter$ModalOpen = function (a) {
+	return {ctor: 'ModalOpen', _0: a};
+};
+var _user$project$ModalRouter$PopState = function (a) {
+	return {ctor: 'PopState', _0: a};
+};
+var _user$project$ModalRouter$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$ModalRouter$onPopState(_user$project$ModalRouter$PopState),
+				_user$project$ModalRouter$onModalOpen(_user$project$ModalRouter$ModalOpen),
+				_user$project$ModalRouter$onModalClose(_user$project$ModalRouter$ModalClose)
+			]));
+};
+var _user$project$ModalRouter$main = {
+	main: _elm_lang$html$Html_App$program(
+		{init: _user$project$ModalRouter$init, view: _user$project$ModalRouter$view, update: _user$project$ModalRouter$update, subscriptions: _user$project$ModalRouter$subscriptions})
+};

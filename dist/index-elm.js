@@ -7444,533 +7444,291 @@ var _elm_lang$html$Html_App$beginnerProgram = function (_p1) {
 };
 var _elm_lang$html$Html_App$map = _elm_lang$virtual_dom$VirtualDom$map;
 
-var _elm_lang$html$Html_Attributes$attribute = _elm_lang$virtual_dom$VirtualDom$attribute;
-var _elm_lang$html$Html_Attributes$contextmenu = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$attribute, 'contextmenu', value);
-};
-var _elm_lang$html$Html_Attributes$draggable = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$attribute, 'draggable', value);
-};
-var _elm_lang$html$Html_Attributes$list = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$attribute, 'list', value);
-};
-var _elm_lang$html$Html_Attributes$maxlength = function (n) {
-	return A2(
-		_elm_lang$html$Html_Attributes$attribute,
-		'maxlength',
-		_elm_lang$core$Basics$toString(n));
-};
-var _elm_lang$html$Html_Attributes$datetime = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$attribute, 'datetime', value);
-};
-var _elm_lang$html$Html_Attributes$pubdate = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$attribute, 'pubdate', value);
-};
-var _elm_lang$html$Html_Attributes$colspan = function (n) {
-	return A2(
-		_elm_lang$html$Html_Attributes$attribute,
-		'colspan',
-		_elm_lang$core$Basics$toString(n));
-};
-var _elm_lang$html$Html_Attributes$rowspan = function (n) {
-	return A2(
-		_elm_lang$html$Html_Attributes$attribute,
-		'rowspan',
-		_elm_lang$core$Basics$toString(n));
-};
-var _elm_lang$html$Html_Attributes$property = _elm_lang$virtual_dom$VirtualDom$property;
-var _elm_lang$html$Html_Attributes$stringProperty = F2(
-	function (name, string) {
-		return A2(
-			_elm_lang$html$Html_Attributes$property,
-			name,
-			_elm_lang$core$Json_Encode$string(string));
-	});
-var _elm_lang$html$Html_Attributes$class = function (name) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'className', name);
-};
-var _elm_lang$html$Html_Attributes$id = function (name) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'id', name);
-};
-var _elm_lang$html$Html_Attributes$title = function (name) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'title', name);
-};
-var _elm_lang$html$Html_Attributes$accesskey = function ($char) {
-	return A2(
-		_elm_lang$html$Html_Attributes$stringProperty,
-		'accessKey',
-		_elm_lang$core$String$fromChar($char));
-};
-var _elm_lang$html$Html_Attributes$dir = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'dir', value);
-};
-var _elm_lang$html$Html_Attributes$dropzone = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'dropzone', value);
-};
-var _elm_lang$html$Html_Attributes$itemprop = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'itemprop', value);
-};
-var _elm_lang$html$Html_Attributes$lang = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'lang', value);
-};
-var _elm_lang$html$Html_Attributes$tabindex = function (n) {
-	return A2(
-		_elm_lang$html$Html_Attributes$stringProperty,
-		'tabIndex',
-		_elm_lang$core$Basics$toString(n));
-};
-var _elm_lang$html$Html_Attributes$charset = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'charset', value);
-};
-var _elm_lang$html$Html_Attributes$content = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'content', value);
-};
-var _elm_lang$html$Html_Attributes$httpEquiv = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'httpEquiv', value);
-};
-var _elm_lang$html$Html_Attributes$language = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'language', value);
-};
-var _elm_lang$html$Html_Attributes$src = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'src', value);
-};
-var _elm_lang$html$Html_Attributes$height = function (value) {
-	return A2(
-		_elm_lang$html$Html_Attributes$stringProperty,
-		'height',
-		_elm_lang$core$Basics$toString(value));
-};
-var _elm_lang$html$Html_Attributes$width = function (value) {
-	return A2(
-		_elm_lang$html$Html_Attributes$stringProperty,
-		'width',
-		_elm_lang$core$Basics$toString(value));
-};
-var _elm_lang$html$Html_Attributes$alt = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'alt', value);
-};
-var _elm_lang$html$Html_Attributes$preload = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'preload', value);
-};
-var _elm_lang$html$Html_Attributes$poster = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'poster', value);
-};
-var _elm_lang$html$Html_Attributes$kind = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'kind', value);
-};
-var _elm_lang$html$Html_Attributes$srclang = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'srclang', value);
-};
-var _elm_lang$html$Html_Attributes$sandbox = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'sandbox', value);
-};
-var _elm_lang$html$Html_Attributes$srcdoc = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'srcdoc', value);
-};
-var _elm_lang$html$Html_Attributes$type$ = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'type', value);
-};
-var _elm_lang$html$Html_Attributes$value = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'value', value);
-};
-var _elm_lang$html$Html_Attributes$defaultValue = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'defaultValue', value);
-};
-var _elm_lang$html$Html_Attributes$placeholder = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'placeholder', value);
-};
-var _elm_lang$html$Html_Attributes$accept = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'accept', value);
-};
-var _elm_lang$html$Html_Attributes$acceptCharset = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'acceptCharset', value);
-};
-var _elm_lang$html$Html_Attributes$action = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'action', value);
-};
-var _elm_lang$html$Html_Attributes$autocomplete = function (bool) {
-	return A2(
-		_elm_lang$html$Html_Attributes$stringProperty,
-		'autocomplete',
-		bool ? 'on' : 'off');
-};
-var _elm_lang$html$Html_Attributes$autosave = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'autosave', value);
-};
-var _elm_lang$html$Html_Attributes$enctype = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'enctype', value);
-};
-var _elm_lang$html$Html_Attributes$formaction = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'formAction', value);
-};
-var _elm_lang$html$Html_Attributes$minlength = function (n) {
-	return A2(
-		_elm_lang$html$Html_Attributes$stringProperty,
-		'minLength',
-		_elm_lang$core$Basics$toString(n));
-};
-var _elm_lang$html$Html_Attributes$method = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'method', value);
-};
-var _elm_lang$html$Html_Attributes$name = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'name', value);
-};
-var _elm_lang$html$Html_Attributes$pattern = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'pattern', value);
-};
-var _elm_lang$html$Html_Attributes$size = function (n) {
-	return A2(
-		_elm_lang$html$Html_Attributes$stringProperty,
-		'size',
-		_elm_lang$core$Basics$toString(n));
-};
-var _elm_lang$html$Html_Attributes$for = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'htmlFor', value);
-};
-var _elm_lang$html$Html_Attributes$form = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'form', value);
-};
-var _elm_lang$html$Html_Attributes$max = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'max', value);
-};
-var _elm_lang$html$Html_Attributes$min = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'min', value);
-};
-var _elm_lang$html$Html_Attributes$step = function (n) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'step', n);
-};
-var _elm_lang$html$Html_Attributes$cols = function (n) {
-	return A2(
-		_elm_lang$html$Html_Attributes$stringProperty,
-		'cols',
-		_elm_lang$core$Basics$toString(n));
-};
-var _elm_lang$html$Html_Attributes$rows = function (n) {
-	return A2(
-		_elm_lang$html$Html_Attributes$stringProperty,
-		'rows',
-		_elm_lang$core$Basics$toString(n));
-};
-var _elm_lang$html$Html_Attributes$wrap = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'wrap', value);
-};
-var _elm_lang$html$Html_Attributes$usemap = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'useMap', value);
-};
-var _elm_lang$html$Html_Attributes$shape = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'shape', value);
-};
-var _elm_lang$html$Html_Attributes$coords = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'coords', value);
-};
-var _elm_lang$html$Html_Attributes$challenge = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'challenge', value);
-};
-var _elm_lang$html$Html_Attributes$keytype = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'keytype', value);
-};
-var _elm_lang$html$Html_Attributes$align = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'align', value);
-};
-var _elm_lang$html$Html_Attributes$cite = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'cite', value);
-};
-var _elm_lang$html$Html_Attributes$href = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'href', value);
-};
-var _elm_lang$html$Html_Attributes$target = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'target', value);
-};
-var _elm_lang$html$Html_Attributes$downloadAs = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'download', value);
-};
-var _elm_lang$html$Html_Attributes$hreflang = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'hreflang', value);
-};
-var _elm_lang$html$Html_Attributes$media = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'media', value);
-};
-var _elm_lang$html$Html_Attributes$ping = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'ping', value);
-};
-var _elm_lang$html$Html_Attributes$rel = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'rel', value);
-};
-var _elm_lang$html$Html_Attributes$start = function (n) {
-	return A2(
-		_elm_lang$html$Html_Attributes$stringProperty,
-		'start',
-		_elm_lang$core$Basics$toString(n));
-};
-var _elm_lang$html$Html_Attributes$headers = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'headers', value);
-};
-var _elm_lang$html$Html_Attributes$scope = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'scope', value);
-};
-var _elm_lang$html$Html_Attributes$manifest = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$stringProperty, 'manifest', value);
-};
-var _elm_lang$html$Html_Attributes$boolProperty = F2(
-	function (name, bool) {
-		return A2(
-			_elm_lang$html$Html_Attributes$property,
-			name,
-			_elm_lang$core$Json_Encode$bool(bool));
-	});
-var _elm_lang$html$Html_Attributes$hidden = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'hidden', bool);
-};
-var _elm_lang$html$Html_Attributes$contenteditable = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'contentEditable', bool);
-};
-var _elm_lang$html$Html_Attributes$spellcheck = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'spellcheck', bool);
-};
-var _elm_lang$html$Html_Attributes$async = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'async', bool);
-};
-var _elm_lang$html$Html_Attributes$defer = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'defer', bool);
-};
-var _elm_lang$html$Html_Attributes$scoped = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'scoped', bool);
-};
-var _elm_lang$html$Html_Attributes$autoplay = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'autoplay', bool);
-};
-var _elm_lang$html$Html_Attributes$controls = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'controls', bool);
-};
-var _elm_lang$html$Html_Attributes$loop = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'loop', bool);
-};
-var _elm_lang$html$Html_Attributes$default = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'default', bool);
-};
-var _elm_lang$html$Html_Attributes$seamless = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'seamless', bool);
-};
-var _elm_lang$html$Html_Attributes$checked = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'checked', bool);
-};
-var _elm_lang$html$Html_Attributes$selected = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'selected', bool);
-};
-var _elm_lang$html$Html_Attributes$autofocus = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'autofocus', bool);
-};
-var _elm_lang$html$Html_Attributes$disabled = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'disabled', bool);
-};
-var _elm_lang$html$Html_Attributes$multiple = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'multiple', bool);
-};
-var _elm_lang$html$Html_Attributes$novalidate = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'noValidate', bool);
-};
-var _elm_lang$html$Html_Attributes$readonly = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'readOnly', bool);
-};
-var _elm_lang$html$Html_Attributes$required = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'required', bool);
-};
-var _elm_lang$html$Html_Attributes$ismap = function (value) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'isMap', value);
-};
-var _elm_lang$html$Html_Attributes$download = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'download', bool);
-};
-var _elm_lang$html$Html_Attributes$reversed = function (bool) {
-	return A2(_elm_lang$html$Html_Attributes$boolProperty, 'reversed', bool);
-};
-var _elm_lang$html$Html_Attributes$classList = function (list) {
-	return _elm_lang$html$Html_Attributes$class(
-		A2(
-			_elm_lang$core$String$join,
-			' ',
-			A2(
-				_elm_lang$core$List$map,
-				_elm_lang$core$Basics$fst,
-				A2(_elm_lang$core$List$filter, _elm_lang$core$Basics$snd, list))));
-};
-var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
+/* globals Elm */
+/* eslint-disable new-cap */
 
-var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode_ops[':='], 'keyCode', _elm_lang$core$Json_Decode$int);
-var _elm_lang$html$Html_Events$targetChecked = A2(
-	_elm_lang$core$Json_Decode$at,
-	_elm_lang$core$Native_List.fromArray(
-		['target', 'checked']),
-	_elm_lang$core$Json_Decode$bool);
-var _elm_lang$html$Html_Events$targetValue = A2(
-	_elm_lang$core$Json_Decode$at,
-	_elm_lang$core$Native_List.fromArray(
-		['target', 'value']),
-	_elm_lang$core$Json_Decode$string);
-var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
-var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
-var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
-var _elm_lang$html$Html_Events$onFocus = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'focus',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onBlur = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'blur',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
-	_elm_lang$html$Html_Events$defaultOptions,
-	{preventDefault: true});
-var _elm_lang$html$Html_Events$onSubmit = function (msg) {
-	return A3(
-		_elm_lang$html$Html_Events$onWithOptions,
-		'submit',
-		_elm_lang$html$Html_Events$onSubmitOptions,
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onCheck = function (tagger) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'change',
-		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
-};
-var _elm_lang$html$Html_Events$onInput = function (tagger) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'input',
-		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
-};
-var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseout',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseover',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseleave',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseenter',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseup',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mousedown',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'dblclick',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onClick = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'click',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$Options = F2(
-	function (a, b) {
-		return {stopPropagation: a, preventDefault: b};
-	});
+Elm.Native = Elm.Native || {};
+Elm.Native.History = Elm.Native.History || {};
 
-var _user$project$Spelling$view = function (model) {
+
+const ModalInfo = function (modalSelector, targetUrl) {
+  return modalSelector ? { modalSelector, targetUrl } : null;
+};
+
+const HistoryState = function ({ url, modalSelector, targetUrl } = {}) {
+  return url
+    ? { url, modalInfo: ModalInfo(modalSelector, targetUrl) }
+    : null;
+};
+
+// definition
+Elm.Native.History.make = function (localRuntime) {
+  // attempt to short-circuit
+  if (localRuntime.Native.History.values) {
+    return Elm.Native.History.values;
+  }
+
+  return {
+    pushState: (...args) => window.history.pushState(...args),
+    replaceState: (...args) => window.history.replaceState(...args),
+    getState: () => HistoryState(window.history.state),
+  };
+};
+
+/* globals Elm, $ */
+/* eslint-disable new-cap */
+
+Elm.Native = Elm.Native || {};
+Elm.Native.Modal = Elm.Native.Modal || {};
+
+// definition
+Elm.Native.Modal.make = function (localRuntime) {
+  // attempt to short-circuit
+  if (localRuntime.Native.Modal.values) {
+    return Elm.Native.Modal.values;
+  }
+
+  return {
+    open: (selector) => {
+      document.querySelector(selector);
+      $(selector).moda('show');
+    },
+    close: (selector) => {
+      document.querySelector(selector);
+      $(selector).moda('hide');
+    },
+    getOpen: () => {
+      return ['myId'];
+    },
+  };
+};
+
+var _user$project$ModalRouter$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[]),
 		_elm_lang$core$Native_List.fromArray(
+			[]));
+};
+var _user$project$ModalRouter$modalUrlToPageUrl = function (modalUrl) {
+	return modalUrl;
+};
+var _user$project$ModalRouter$placeholderUrl = 'placeholderUrl';
+var _user$project$ModalRouter$onPopState = _elm_lang$core$Native_Platform.incomingPort(
+	'onPopState',
+	_elm_lang$core$Json_Decode$oneOf(
+		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html$text(model.message)
+				_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+				A2(
+				_elm_lang$core$Json_Decode$map,
+				_elm_lang$core$Maybe$Just,
+				A2(
+					_elm_lang$core$Json_Decode$andThen,
+					A2(
+						_elm_lang$core$Json_Decode_ops[':='],
+						'modal',
+						_elm_lang$core$Json_Decode$oneOf(
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+									A2(
+									_elm_lang$core$Json_Decode$map,
+									_elm_lang$core$Maybe$Just,
+									A2(
+										_elm_lang$core$Json_Decode$andThen,
+										A2(_elm_lang$core$Json_Decode_ops[':='], 'modalSelector', _elm_lang$core$Json_Decode$string),
+										function (modalSelector) {
+											return A2(
+												_elm_lang$core$Json_Decode$andThen,
+												A2(
+													_elm_lang$core$Json_Decode_ops[':='],
+													'targetUrl',
+													_elm_lang$core$Json_Decode$oneOf(
+														_elm_lang$core$Native_List.fromArray(
+															[
+																_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+																A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string)
+															]))),
+												function (targetUrl) {
+													return _elm_lang$core$Json_Decode$succeed(
+														{modalSelector: modalSelector, targetUrl: targetUrl});
+												});
+										}))
+								]))),
+					function (modal) {
+						return A2(
+							_elm_lang$core$Json_Decode$andThen,
+							A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
+							function (url) {
+								return _elm_lang$core$Json_Decode$succeed(
+									{modal: modal, url: url});
+							});
+					}))
+			])));
+var _user$project$ModalRouter$onModalOpen = _elm_lang$core$Native_Platform.incomingPort(
+	'onModalOpen',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'modalSelector', _elm_lang$core$Json_Decode$string),
+		function (modalSelector) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				A2(
+					_elm_lang$core$Json_Decode_ops[':='],
+					'targetUrl',
+					_elm_lang$core$Json_Decode$oneOf(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+								A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string)
+							]))),
+				function (targetUrl) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{modalSelector: modalSelector, targetUrl: targetUrl});
+				});
+		}));
+var _user$project$ModalRouter$onModalClose = _elm_lang$core$Native_Platform.incomingPort('onModalClose', _elm_lang$core$Json_Decode$string);
+var _user$project$ModalRouter$openModal = _elm_lang$core$Native_Platform.outgoingPort(
+	'openModal',
+	function (v) {
+		return v;
+	});
+var _user$project$ModalRouter$closeModal = _elm_lang$core$Native_Platform.outgoingPort(
+	'closeModal',
+	function (v) {
+		return v;
+	});
+var _user$project$ModalRouter$pushHistoryState = _elm_lang$core$Native_Platform.outgoingPort(
+	'pushHistoryState',
+	function (v) {
+		return {
+			modal: (v.modal.ctor === 'Nothing') ? null : {
+				modalSelector: v.modal._0.modalSelector,
+				targetUrl: (v.modal._0.targetUrl.ctor === 'Nothing') ? null : v.modal._0.targetUrl._0
+			},
+			url: v.url
+		};
+	});
+var _user$project$ModalRouter$replaceHistoryState = _elm_lang$core$Native_Platform.outgoingPort(
+	'replaceHistoryState',
+	function (v) {
+		return {
+			modal: (v.modal.ctor === 'Nothing') ? null : {
+				modalSelector: v.modal._0.modalSelector,
+				targetUrl: (v.modal._0.targetUrl.ctor === 'Nothing') ? null : v.modal._0.targetUrl._0
+			},
+			url: v.url
+		};
+	});
+var _user$project$ModalRouter$applyState = function (state) {
+	return _elm_lang$core$Platform_Cmd$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$ModalRouter$replaceHistoryState(state),
+				function () {
+				var _p0 = state.modal;
+				if (_p0.ctor === 'Nothing') {
+					return _elm_lang$core$Platform_Cmd$none;
+				} else {
+					return _user$project$ModalRouter$openModal(_p0._0.modalSelector);
+				}
+			}()
 			]));
 };
-var _user$project$Spelling$popstate = _elm_lang$core$Native_Platform.incomingPort('popstate', _elm_lang$core$Json_Decode$string);
-var _user$project$Spelling$modalOpen = _elm_lang$core$Native_Platform.incomingPort('modalOpen', _elm_lang$core$Json_Decode$string);
-var _user$project$Spelling$modalClose = _elm_lang$core$Native_Platform.incomingPort('modalClose', _elm_lang$core$Json_Decode$string);
-var _user$project$Spelling$Model = function (a) {
-	return {message: a};
+var _user$project$ModalRouter$ModalInfo = F2(
+	function (a, b) {
+		return {modalSelector: a, targetUrl: b};
+	});
+var _user$project$ModalRouter$HistoryState = F2(
+	function (a, b) {
+		return {modal: a, url: b};
+	});
+var _user$project$ModalRouter$createStateWithoutModal = function (url) {
+	return _user$project$ModalRouter$pushHistoryState(
+		A2(_user$project$ModalRouter$HistoryState, _elm_lang$core$Maybe$Nothing, url));
 };
-var _user$project$Spelling$init = {
-	ctor: '_Tuple2',
-	_0: _user$project$Spelling$Model(''),
-	_1: _elm_lang$core$Platform_Cmd$none
+var _user$project$ModalRouter$createStateWithModal = function (modal) {
+	var url = function () {
+		var _p1 = modal.targetUrl;
+		if (_p1.ctor === 'Nothing') {
+			return _user$project$ModalRouter$placeholderUrl;
+		} else {
+			return _user$project$ModalRouter$modalUrlToPageUrl(_p1._0);
+		}
+	}();
+	return _user$project$ModalRouter$pushHistoryState(
+		A2(
+			_user$project$ModalRouter$HistoryState,
+			_elm_lang$core$Maybe$Just(modal),
+			url));
 };
-var _user$project$Spelling$update = F2(
+var _user$project$ModalRouter$setCurrentState = function (url) {
+	return _user$project$ModalRouter$replaceHistoryState(
+		A2(_user$project$ModalRouter$HistoryState, _elm_lang$core$Maybe$Nothing, url));
+};
+var _user$project$ModalRouter$Model = {};
+var _user$project$ModalRouter$init = {ctor: '_Tuple2', _0: _user$project$ModalRouter$Model, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$ModalRouter$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var _p2 = msg;
+		switch (_p2.ctor) {
 			case 'PopState':
-				return {
-					ctor: '_Tuple2',
-					_0: _user$project$Spelling$Model(
-						A2(_elm_lang$core$Basics_ops['++'], 'Popstate invoked: ', _p0._0)),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+				var _p3 = _p2._0;
+				if (_p3.ctor === 'Nothing') {
+					return {
+						ctor: '_Tuple2',
+						_0: _user$project$ModalRouter$Model,
+						_1: _user$project$ModalRouter$setCurrentState(_user$project$ModalRouter$placeholderUrl)
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _user$project$ModalRouter$Model,
+						_1: _user$project$ModalRouter$applyState(_p3._0)
+					};
+				}
 			case 'ModalOpen':
 				return {
 					ctor: '_Tuple2',
-					_0: _user$project$Spelling$Model(
-						A2(_elm_lang$core$Basics_ops['++'], 'Modal was open: ', _p0._0)),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_0: _user$project$ModalRouter$Model,
+					_1: _user$project$ModalRouter$createStateWithModal(_p2._0)
 				};
 			default:
 				return {
 					ctor: '_Tuple2',
-					_0: _user$project$Spelling$Model(
-						A2(_elm_lang$core$Basics_ops['++'], 'Modal was closed: ', _p0._0)),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_0: _user$project$ModalRouter$Model,
+					_1: _user$project$ModalRouter$createStateWithoutModal(_user$project$ModalRouter$placeholderUrl)
 				};
 		}
 	});
-var _user$project$Spelling$ModalClose = function (a) {
+var _user$project$ModalRouter$ModalClose = function (a) {
 	return {ctor: 'ModalClose', _0: a};
 };
-var _user$project$Spelling$ModalOpen = function (a) {
+var _user$project$ModalRouter$ModalOpen = function (a) {
 	return {ctor: 'ModalOpen', _0: a};
 };
-var _user$project$Spelling$PopState = function (a) {
+var _user$project$ModalRouter$PopState = function (a) {
 	return {ctor: 'PopState', _0: a};
 };
-var _user$project$Spelling$subscriptions = function (model) {
+var _user$project$ModalRouter$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$Spelling$popstate(_user$project$Spelling$PopState),
-				_user$project$Spelling$modalOpen(_user$project$Spelling$ModalOpen),
-				_user$project$Spelling$modalClose(_user$project$Spelling$ModalClose)
+				_user$project$ModalRouter$onPopState(_user$project$ModalRouter$PopState),
+				_user$project$ModalRouter$onModalOpen(_user$project$ModalRouter$ModalOpen),
+				_user$project$ModalRouter$onModalClose(_user$project$ModalRouter$ModalClose)
 			]));
 };
-var _user$project$Spelling$main = {
+var _user$project$ModalRouter$main = {
 	main: _elm_lang$html$Html_App$program(
-		{init: _user$project$Spelling$init, view: _user$project$Spelling$view, update: _user$project$Spelling$update, subscriptions: _user$project$Spelling$subscriptions})
+		{init: _user$project$ModalRouter$init, view: _user$project$ModalRouter$view, update: _user$project$ModalRouter$update, subscriptions: _user$project$ModalRouter$subscriptions})
 };
 
 var Elm = {};
-Elm['Spelling'] = Elm['Spelling'] || {};
-_elm_lang$core$Native_Platform.addPublicModule(Elm['Spelling'], 'Spelling', typeof _user$project$Spelling$main === 'undefined' ? null : _user$project$Spelling$main);
+Elm['ModalRouter'] = Elm['ModalRouter'] || {};
+_elm_lang$core$Native_Platform.addPublicModule(Elm['ModalRouter'], 'ModalRouter', typeof _user$project$ModalRouter$main === 'undefined' ? null : _user$project$ModalRouter$main);
 
 if (typeof define === "function" && define['amd'])
 {

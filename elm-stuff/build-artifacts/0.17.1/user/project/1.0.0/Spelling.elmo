@@ -11,6 +11,11 @@ var _user$project$Spelling$view = function (model) {
 var _user$project$Spelling$popstate = _elm_lang$core$Native_Platform.incomingPort('popstate', _elm_lang$core$Json_Decode$string);
 var _user$project$Spelling$modalOpen = _elm_lang$core$Native_Platform.incomingPort('modalOpen', _elm_lang$core$Json_Decode$string);
 var _user$project$Spelling$modalClose = _elm_lang$core$Native_Platform.incomingPort('modalClose', _elm_lang$core$Json_Decode$string);
+var _user$project$Spelling$openModal = _elm_lang$core$Native_Platform.outgoingPort(
+	'openModal',
+	function (v) {
+		return v;
+	});
 var _user$project$Spelling$Model = function (a) {
 	return {message: a};
 };
@@ -35,7 +40,7 @@ var _user$project$Spelling$update = F2(
 					ctor: '_Tuple2',
 					_0: _user$project$Spelling$Model(
 						A2(_elm_lang$core$Basics_ops['++'], 'Modal was open: ', _p0._0)),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_1: _user$project$Spelling$openModal('Straight from ELM!! BOOM!')
 				};
 			default:
 				return {
