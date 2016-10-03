@@ -2,8 +2,8 @@ port module ModalRouter exposing (..)
 import Html exposing (..)
 import Html.App as App
 import String
-import Native.History
-import Native.Modal
+import Native.History as History
+import Native.Modal as Modal
 
 placeholderUrl =
   "placeholderUrl"
@@ -29,7 +29,7 @@ init =
 
 
 -- SUBSCRIPTIONS
--- Input ports apply a function to whatever JS sends and trigger a message
+-- These are basically our events sent from JavaScript
 
 port onPopState : (Maybe HistoryState -> msg) -> Sub msg
 port onModalOpen : (ModalInfo -> msg) -> Sub msg
@@ -43,22 +43,13 @@ subscriptions model =
         , onModalClose ModalClose
         ]
 
-
--- PORTS
--- Output ports return Commands that will be run by Html.App
-
-port openModal : String -> Cmd msg
-port closeModal : String -> Cmd msg
-port pushHistoryState : HistoryState -> Cmd msg
-port replaceHistoryState : HistoryState -> Cmd msg
-
 -- UPDATE
 
 
 applyState: HistoryState -> Cmd Msg
 applyState state =
   Cmd.batch
-    [ replaceHistoryState state
+    [ History.replaceState state state.url state.url
     , case state.modal of
         Nothing ->
           Cmd.none
@@ -99,7 +90,7 @@ setCurrentState url =
 type Msg
   = PopState (Maybe HistoryState)
   | ModalOpen ModalInfo
-  | ModalClose String -- this string is just to comply with the subscription of onModalClose
+  | ModalClose ModalInfo -- this string is just to comply with the subscription of onModalClose
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
