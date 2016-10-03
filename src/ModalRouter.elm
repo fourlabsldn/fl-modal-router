@@ -15,25 +15,31 @@ type alias ModalInfo =
   , targetUrl: Maybe String
   }
 
+
 type alias HistoryState =
-  { modal: Maybe ModalInfo
+  { modals: List ModalInfo
   , url: String
   }
 
+
 type alias Model =
-  {}
+  { openModals: List ModalInfo
+  }
+
 
 init : (Model, Cmd Msg)
 init =
-  (Model, Cmd.none)
+  (Model [], Cmd.none)
 
 
 -- SUBSCRIPTIONS
 -- These are basically our events sent from JavaScript
 
+
 port onPopState : (Maybe HistoryState -> msg) -> Sub msg
 port onModalOpen : (ModalInfo -> msg) -> Sub msg
 port onModalClose : (String -> msg) -> Sub msg
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -42,6 +48,7 @@ subscriptions model =
         , onModalOpen ModalOpen
         , onModalClose ModalClose
         ]
+
 
 -- UPDATE
 
@@ -82,9 +89,9 @@ createStateWithModal modal =
       pushHistoryState ( HistoryState (Just modal) url )
 
 
-setCurrentState: String -> Cmd msg
-setCurrentState url =
-  replaceHistoryState ( HistoryState Nothing url )
+setCurrentState: Maybe ModalInfo -> String -> Cmd msg
+setCurrentState modal url =
+  replaceHistoryState ( HistoryState modal url )
 
 
 type Msg
@@ -99,12 +106,18 @@ update msg model =
     PopState state ->
       case state of
         Nothing ->
-          ( Model , setCurrentState placeholderUrl ) -- FIXME this should be replacestate
+          ( Model , setCurrentState Nothing placeholderUrl )
 
         Just s ->
           ( Model , applyState s )
 
     ModalOpen modal ->
+      let
+        currentHistoryState = History.getState
+      in
+        case currentHistoryState of
+          Nothing ->
+            ( )
       ( Model , createStateWithModal modal )
 
     ModalClose url->
