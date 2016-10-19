@@ -6,7 +6,8 @@ organiser.registerAll('./tasks', {
     dest: './dist',
   },
   'build-elm': {
-    src: 'src/ModalRouter.elm',
+    watch: 'src/**/*',
+    src: 'src/Main.elm',
     dest: 'dist',
     moduleName: 'index-elm',
     ext: 'js',
