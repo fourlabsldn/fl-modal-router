@@ -7468,10 +7468,6 @@ var _user$project$ModalRouter_Types$PopState = function (a) {
 /* globals Elm */
 /* eslint-disable new-cap */
 
-Elm.Native = Elm.Native || {};
-Elm.Native.History = Elm.Native.History || {};
-
-
 const ModalInfo = function (modalSelector, targetUrl) {
   return modalSelector ? { modalSelector, targetUrl } : null;
 };
@@ -7482,46 +7478,25 @@ const HistoryState = function ({ url, modalSelector, targetUrl } = {}) {
     : null;
 };
 
-// definition
-Elm.Native.History.make = function (localRuntime) {
-  // attempt to short-circuit
-  if (localRuntime.Native.History.values) {
-    return Elm.Native.History.values;
-  }
-
-  return {
-    pushState: (...args) => window.history.pushState(...args),
-    replaceState: (...args) => window.history.replaceState(...args),
-    getState: () => HistoryState(window.history.state),
-  };
+var _elm_lang$core$Native_History = {
+  pushState: (...args) => window.history.pushState(...args),
+  replaceState: (...args) => window.history.replaceState(...args),
+  getState: () => HistoryState(window.history.state),
 };
 
-/* globals Elm, $ */
-/* eslint-disable new-cap */
-
-Elm.Native = Elm.Native || {};
-Elm.Native.Modal = Elm.Native.Modal || {};
-
-// definition
-Elm.Native.Modal.make = function (localRuntime) {
-  // attempt to short-circuit
-  if (localRuntime.Native.Modal.values) {
-    return Elm.Native.Modal.values;
-  }
-
-  return {
-    open: (selector) => {
-      document.querySelector(selector);
-      $(selector).moda('show');
-    },
-    close: (selector) => {
-      document.querySelector(selector);
-      $(selector).moda('hide');
-    },
-    getOpen: () => {
-      return ['myId'];
-    },
-  };
+/* global $*/
+var _elm_lang$core$Native_Modal = {
+  open: (selector) => {
+    document.querySelector(selector);
+    $(selector).modal('show');
+  },
+  close: (selector) => {
+    document.querySelector(selector);
+    $(selector).modal('hide');
+  },
+  getOpen: () => {
+    return ['myId']; // TODO: implement this
+  },
 };
 
 var _user$project$ModalRouter_State$setCurrentState = F2(
@@ -7736,7 +7711,7 @@ var _user$project$ModalRouter_State$subscriptions = function (model) {
 			]));
 };
 
-var _user$project$Main$view = function (model) {
+var _user$project$ModalRouter$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -7744,14 +7719,14 @@ var _user$project$Main$view = function (model) {
 		_elm_lang$core$Native_List.fromArray(
 			[]));
 };
-var _user$project$Main$main = {
+var _user$project$ModalRouter$main = {
 	main: _elm_lang$html$Html_App$program(
-		{init: _user$project$ModalRouter_State$init, view: _user$project$Main$view, update: _user$project$ModalRouter_State$update, subscriptions: _user$project$ModalRouter_State$subscriptions})
+		{init: _user$project$ModalRouter_State$init, view: _user$project$ModalRouter$view, update: _user$project$ModalRouter_State$update, subscriptions: _user$project$ModalRouter_State$subscriptions})
 };
 
 var Elm = {};
-Elm['Main'] = Elm['Main'] || {};
-_elm_lang$core$Native_Platform.addPublicModule(Elm['Main'], 'Main', typeof _user$project$Main$main === 'undefined' ? null : _user$project$Main$main);
+Elm['ModalRouter'] = Elm['ModalRouter'] || {};
+_elm_lang$core$Native_Platform.addPublicModule(Elm['ModalRouter'], 'ModalRouter', typeof _user$project$ModalRouter$main === 'undefined' ? null : _user$project$ModalRouter$main);
 
 if (typeof define === "function" && define['amd'])
 {

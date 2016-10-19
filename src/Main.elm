@@ -1,3 +1,5 @@
+module ModalRouter exposing (..)
+
 import ModalRouter.State exposing ( init, update, subscriptions )
 import ModalRouter.Types exposing ( Model, Msg )
 import Html exposing (..)
