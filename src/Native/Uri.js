@@ -1,4 +1,4 @@
-var _elm_lang$core$Native_Uri = {
+var _user$project$Native_Uri = {
   encodeUri: encodeURI,
   encodeUriComponent: encodeURIComponent
 };

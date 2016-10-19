@@ -1,5 +1,5 @@
 /* global $*/
-var _elm_lang$core$Native_Modal = {
+var _user$project$Native_Modal = {
   open: (selector) => {
     document.querySelector(selector);
     $(selector).modal('show');
