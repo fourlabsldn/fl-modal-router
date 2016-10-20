@@ -9,7 +9,7 @@ import Maybe
 
 
 placeholderUrl =
-    "placeholderUrl"
+    "index.html"
 
 
 
@@ -55,12 +55,12 @@ update msg model =
                     )
 
                 Just s ->
-                  ( model , applyState s )
+                  ( conformModelToState s model , conformWindowToState s )
 
         ModalOpen modal ->
             let
                 modalRegisteredAsOpen =
-                    List.member modal model.openModals
+                    isModalOpen model.openModals modal.selector
             in
                 if modalRegisteredAsOpen then
                     ( model , Cmd.none )
@@ -97,11 +97,11 @@ isModalOpen openModals selector =
 
 
 
-applyState: HistoryState -> Cmd Msg
-applyState state =
+conformWindowToState: HistoryState -> Cmd Msg
+conformWindowToState state =
   Cmd.batch
-    [ History.replaceState state
-    , case Debug.log "popped modal" state.modal of
+    [ History.replaceState (Debug.log "popped historyState: " state)
+    , case state.modal of
         Nothing ->
           Cmd.none
 
@@ -111,8 +111,22 @@ applyState state =
 
 
 
-modalUrlToPageUrl: String -> String
-modalUrlToPageUrl modalUrl = modalUrl
+conformModelToState : HistoryState -> Model -> Model
+conformModelToState state model =
+    let
+        openModals =
+            case state.modal of
+                Nothing ->
+                    []
+
+                Just modalInfo ->
+                    if List.member modalInfo model.openModals
+                        then
+                            model.openModals
+                        else
+                            modalInfo :: model.openModals
+    in
+        { model | openModals = openModals }
 
 
 

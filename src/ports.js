@@ -29,6 +29,7 @@ const {
 } = app.ports;
 
 window.addEventListener('popstate', (e) => {
+  console.log('Popstate called');
   const newState = e.state;
   const modal = newState ? getMaybe(newState.modal) : {};
 

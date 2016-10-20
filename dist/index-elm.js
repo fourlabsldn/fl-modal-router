@@ -7691,8 +7691,14 @@ const HistoryState = function ({ url, selector, targetUrl } = {}) {
 };
 
 const _user$project$Native_History = {
-  pushState: (state) => window.history.pushState(state, 'modal-router-state', state.url),
-  replaceState: (state) => window.history.replaceState(state, 'modal-router-state', state.url),
+  pushState: (state) => {
+    console.log('Pushing state');
+    window.history.pushState(state, 'modal-router-state', state.url)
+  },
+  replaceState: (state) => {
+    console.log('Replacing state by:', state.url);
+    window.history.replaceState(state, 'modal-router-state', state.url)
+  },
   getState: () => {
     const windowState = window.history.state;
     const histState = windowState
@@ -7789,20 +7795,34 @@ var _user$project$ModalRouter_State$setCurrentState = F2(
 		return _user$project$History$replaceState(
 			A2(_user$project$History$HistoryState, modal, url));
 	});
-var _user$project$ModalRouter_State$modalUrlToPageUrl = function (modalUrl) {
-	return modalUrl;
-};
-var _user$project$ModalRouter_State$applyState = function (state) {
+var _user$project$ModalRouter_State$conformModelToState = F2(
+	function (state, model) {
+		var openModals = function () {
+			var _p0 = state.modal;
+			if (_p0.ctor === 'Nothing') {
+				return _elm_lang$core$Native_List.fromArray(
+					[]);
+			} else {
+				var _p1 = _p0._0;
+				return A2(_elm_lang$core$List$member, _p1, model.openModals) ? model.openModals : A2(_elm_lang$core$List_ops['::'], _p1, model.openModals);
+			}
+		}();
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{openModals: openModals});
+	});
+var _user$project$ModalRouter_State$conformWindowToState = function (state) {
 	return _elm_lang$core$Platform_Cmd$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$History$replaceState(state),
+				_user$project$History$replaceState(
+				A2(_elm_lang$core$Debug$log, 'popped historyState: ', state)),
 				function () {
-				var _p0 = A2(_elm_lang$core$Debug$log, 'popped modal', state.modal);
-				if (_p0.ctor === 'Nothing') {
+				var _p2 = state.modal;
+				if (_p2.ctor === 'Nothing') {
 					return _elm_lang$core$Platform_Cmd$none;
 				} else {
-					return _user$project$Modal$open(_p0._0);
+					return _user$project$Modal$open(_p2._0);
 				}
 			}()
 			]));
@@ -7826,7 +7846,7 @@ var _user$project$ModalRouter_State$init = {
 			[])),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
-var _user$project$ModalRouter_State$placeholderUrl = 'placeholderUrl';
+var _user$project$ModalRouter_State$placeholderUrl = 'index.html';
 var _user$project$ModalRouter_State$createState = F2(
 	function (modal, url) {
 		var stateUrl = A2(
@@ -7848,11 +7868,11 @@ var _user$project$ModalRouter_State$createState = F2(
 	});
 var _user$project$ModalRouter_State$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
 			case 'PopState':
-				var _p2 = _p1._0;
-				if (_p2.ctor === 'Nothing') {
+				var _p4 = _p3._0;
+				if (_p4.ctor === 'Nothing') {
 					return {
 						ctor: '_Tuple2',
 						_0: model,
@@ -7862,37 +7882,38 @@ var _user$project$ModalRouter_State$update = F2(
 							_user$project$ModalRouter_State$placeholderUrl)
 					};
 				} else {
+					var _p5 = _p4._0;
 					return {
 						ctor: '_Tuple2',
-						_0: model,
-						_1: _user$project$ModalRouter_State$applyState(_p2._0)
+						_0: A2(_user$project$ModalRouter_State$conformModelToState, _p5, model),
+						_1: _user$project$ModalRouter_State$conformWindowToState(_p5)
 					};
 				}
 			case 'ModalOpen':
-				var _p3 = _p1._0;
-				var modalRegisteredAsOpen = A2(_elm_lang$core$List$member, _p3, model.openModals);
+				var _p6 = _p3._0;
+				var modalRegisteredAsOpen = A2(_user$project$ModalRouter_State$isModalOpen, model.openModals, _p6.selector);
 				return modalRegisteredAsOpen ? {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none} : {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							openModals: A2(_elm_lang$core$List_ops['::'], _p3, model.openModals)
+							openModals: A2(_elm_lang$core$List_ops['::'], _p6, model.openModals)
 						}),
 					_1: A2(
 						_user$project$ModalRouter_State$createState,
-						_elm_lang$core$Maybe$Just(_p3),
+						_elm_lang$core$Maybe$Just(_p6),
 						_elm_lang$core$Maybe$Nothing)
 				};
 			default:
-				var _p4 = _p1._0;
+				var _p7 = _p3._0;
 				var listWithoutModal = A2(
 					_elm_lang$core$List$filter,
 					function (n) {
-						return !_elm_lang$core$Native_Utils.eq(n.selector, _p4);
+						return !_elm_lang$core$Native_Utils.eq(n.selector, _p7);
 					},
 					model.openModals);
 				var modalRegisteredAsClosed = _elm_lang$core$Basics$not(
-					A2(_user$project$ModalRouter_State$isModalOpen, model.openModals, _p4));
+					A2(_user$project$ModalRouter_State$isModalOpen, model.openModals, _p7));
 				return modalRegisteredAsClosed ? {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none} : {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
