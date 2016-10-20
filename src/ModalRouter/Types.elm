@@ -2,6 +2,7 @@ module ModalRouter.Types exposing (..)
 
 import Modal exposing ( Modal )
 import History exposing ( HistoryState )
+import Uri exposing ( Uri )
 
 
 
@@ -14,4 +15,5 @@ type Msg
 
 type alias Model =
     { openModals: List Modal
+    , initialUrl : Uri
     }

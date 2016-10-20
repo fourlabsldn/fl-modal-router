@@ -18,3 +18,9 @@ encodeUri str =
 encodeUriComponent : String -> String
 encodeUriComponent str =
     Native.Uri.encodeUriComponent str
+
+
+
+getCurrent : a -> Uri
+getCurrent a =
+    Native.Uri.getCurrent ()

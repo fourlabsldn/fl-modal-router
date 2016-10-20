@@ -9,14 +9,16 @@ import Uri exposing ( Uri )
 import Maybe
 
 
-placeholderUrl =
-    "index.html"
-
-
 
 init : (Model, Cmd Msg)
 init =
-    (Model [], Task.perform identity PopState (Task.succeed Nothing))
+    let
+        currentUrl =
+            Uri.getCurrent ()
+    in
+        ( Model [] currentUrl
+        , Task.perform identity PopState (Task.succeed Nothing)
+        )
 
 
 
@@ -52,7 +54,7 @@ update msg model =
             case state of
                 Nothing ->
                     ( model
-                    , setCurrentState model.openModals placeholderUrl
+                    , setCurrentState model.openModals model.initialUrl
                     )
 
                 Just s ->
@@ -73,7 +75,7 @@ update msg model =
 
                 else
                     ( { model | openModals = plusNewModal }
-                    , createState plusNewModal Nothing
+                    , createState plusNewModal model.initialUrl
                     )
 
         ModalClose selector ->
@@ -90,7 +92,7 @@ update msg model =
 
                 else
                     ( { model | openModals = listWithoutModal }
-                    , createState listWithoutModal Nothing
+                    , createState listWithoutModal model.initialUrl
                     ) -- TODO: make this url be the last one without a modal
 
 
@@ -125,15 +127,13 @@ missingIn a b =
 
 
 -- This does not trigger a popstate
-createState: List Modal -> Maybe String -> Cmd msg
-createState openModals pageUrl =
+createState: List Modal -> String -> Cmd msg
+createState openModals defaultUrl =
     let
-        firstModalUrl =
-            ( List.head openModals ) `Maybe.andThen` (\x -> x.targetUrl)
         stateUrl =
-            [ firstModalUrl, pageUrl ]
-                |> Maybe.oneOf
-                |> Maybe.withDefault placeholderUrl
+            List.head openModals
+                |> (flip Maybe.andThen) (\x -> x.targetUrl)
+                |> Maybe.withDefault defaultUrl
     in
         History.pushState ( HistoryState openModals stateUrl )
 

@@ -7813,9 +7813,14 @@ var _user$project$Modal$Modal = F2(
 
 var _user$project$Native_Uri = {
   encodeUri: encodeURI,
-  encodeUriComponent: encodeURIComponent
+  encodeUriComponent: encodeURIComponent,
+  getCurrent: () => window.location.pathname,
 };
 
+var _user$project$Uri$getCurrent = function (a) {
+	return _user$project$Native_Uri.getCurrent(
+		{ctor: '_Tuple0'});
+};
 var _user$project$Uri$encodeUriComponent = function (str) {
 	return _user$project$Native_Uri.encodeUriComponent(str);
 };
@@ -7844,9 +7849,10 @@ var _user$project$History$HistoryState = F2(
 		return {openModals: a, url: b};
 	});
 
-var _user$project$ModalRouter_Types$Model = function (a) {
-	return {openModals: a};
-};
+var _user$project$ModalRouter_Types$Model = F2(
+	function (a, b) {
+		return {openModals: a, initialUrl: b};
+	});
 var _user$project$ModalRouter_Types$ModalClose = function (a) {
 	return {ctor: 'ModalClose', _0: a};
 };
@@ -7861,6 +7867,21 @@ var _user$project$ModalRouter_State$setCurrentState = F2(
 	function (openModals, url) {
 		return _user$project$History$replaceState(
 			A2(_user$project$History$HistoryState, openModals, url));
+	});
+var _user$project$ModalRouter_State$createState = F2(
+	function (openModals, defaultUrl) {
+		var stateUrl = A2(
+			_elm_lang$core$Maybe$withDefault,
+			defaultUrl,
+			A3(
+				_elm_lang$core$Basics$flip,
+				_elm_lang$core$Maybe$andThen,
+				function (x) {
+					return x.targetUrl;
+				},
+				_elm_lang$core$List$head(openModals)));
+		return _user$project$History$pushState(
+			A2(_user$project$History$HistoryState, openModals, stateUrl));
 	});
 var _user$project$ModalRouter_State$missingIn = F2(
 	function (a, b) {
@@ -7901,35 +7922,6 @@ var _user$project$ModalRouter_State$isModalOpen = F2(
 				},
 				openModals));
 	});
-var _user$project$ModalRouter_State$init = {
-	ctor: '_Tuple2',
-	_0: _user$project$ModalRouter_Types$Model(
-		_elm_lang$core$Native_List.fromArray(
-			[])),
-	_1: A3(
-		_elm_lang$core$Task$perform,
-		_elm_lang$core$Basics$identity,
-		_user$project$ModalRouter_Types$PopState,
-		_elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing))
-};
-var _user$project$ModalRouter_State$placeholderUrl = 'index.html';
-var _user$project$ModalRouter_State$createState = F2(
-	function (openModals, pageUrl) {
-		var firstModalUrl = A2(
-			_elm_lang$core$Maybe$andThen,
-			_elm_lang$core$List$head(openModals),
-			function (x) {
-				return x.targetUrl;
-			});
-		var stateUrl = A2(
-			_elm_lang$core$Maybe$withDefault,
-			_user$project$ModalRouter_State$placeholderUrl,
-			_elm_lang$core$Maybe$oneOf(
-				_elm_lang$core$Native_List.fromArray(
-					[firstModalUrl, pageUrl])));
-		return _user$project$History$pushState(
-			A2(_user$project$History$HistoryState, openModals, stateUrl));
-	});
 var _user$project$ModalRouter_State$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -7940,7 +7932,7 @@ var _user$project$ModalRouter_State$update = F2(
 					return {
 						ctor: '_Tuple2',
 						_0: model,
-						_1: A2(_user$project$ModalRouter_State$setCurrentState, model.openModals, _user$project$ModalRouter_State$placeholderUrl)
+						_1: A2(_user$project$ModalRouter_State$setCurrentState, model.openModals, model.initialUrl)
 					};
 				} else {
 					var _p2 = _p1._0;
@@ -7961,7 +7953,7 @@ var _user$project$ModalRouter_State$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{openModals: plusNewModal}),
-					_1: A2(_user$project$ModalRouter_State$createState, plusNewModal, _elm_lang$core$Maybe$Nothing)
+					_1: A2(_user$project$ModalRouter_State$createState, plusNewModal, model.initialUrl)
 				};
 			default:
 				var _p4 = _p0._0;
@@ -7978,10 +7970,27 @@ var _user$project$ModalRouter_State$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{openModals: listWithoutModal}),
-					_1: A2(_user$project$ModalRouter_State$createState, listWithoutModal, _elm_lang$core$Maybe$Nothing)
+					_1: A2(_user$project$ModalRouter_State$createState, listWithoutModal, model.initialUrl)
 				};
 		}
 	});
+var _user$project$ModalRouter_State$init = function () {
+	var currentUrl = _user$project$Uri$getCurrent(
+		{ctor: '_Tuple0'});
+	return {
+		ctor: '_Tuple2',
+		_0: A2(
+			_user$project$ModalRouter_Types$Model,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			currentUrl),
+		_1: A3(
+			_elm_lang$core$Task$perform,
+			_elm_lang$core$Basics$identity,
+			_user$project$ModalRouter_Types$PopState,
+			_elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing))
+	};
+}();
 var _user$project$ModalRouter_State$onPopState = _elm_lang$core$Native_Platform.incomingPort(
 	'onPopState',
 	_elm_lang$core$Json_Decode$oneOf(
