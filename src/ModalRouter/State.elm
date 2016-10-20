@@ -22,8 +22,10 @@ init sessionId =
         initialModel =
             Model currentOpenModals currentUrl sessionId
     in
+        -- When the page is first loaded we replace the current state for one
+        -- generated using the current sessionId
         ( initialModel
-        , pushState initialModel
+        , replaceState initialModel
         )
 
 
@@ -130,14 +132,16 @@ missingIn a b =
 
 
 toHistoryState : Model -> HistoryState
-toHistoryState { openModals, initialUrl } =
+toHistoryState { openModals, initialUrl, sessionId } =
+    -- The page URL is always the url of the last modal open.
+    -- If no modal is open, the page URL is the initial one
     let
         stateUrl =
             List.head openModals
                 |> (flip Maybe.andThen) (\x -> x.targetUrl)
                 |> Maybe.withDefault initialUrl
     in
-        HistoryState openModals stateUrl
+        HistoryState openModals stateUrl sessionId
 
 
 

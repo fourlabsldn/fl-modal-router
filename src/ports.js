@@ -1,6 +1,7 @@
 /* globals Elm, $ */
 /* eslint-disable new-cap, no-underscore-dangle */
 
+
 /**
  * If it's not a Maybe, returns whatever value that is, if it is
  * a Maybe, returns `value` for `Just value` and `null` for `Nothing`
@@ -59,13 +60,12 @@ const Modal = function ({ selector, targetUrl } = {}) {
  * @param  {Array<Modal>}
  */
 const HistoryState = function (state) {
-  const { url, openModals } = state || {};
+  const { url, openModals, sessionId } = state || {};
   if (!url) {
     // It was not set by Elm
     return null;
   }
 
-  console.log(openModals);
   const modals = parseElmList(openModals).map(Modal);
   modals.forEach(m => {
     if (!m) {
@@ -75,7 +75,7 @@ const HistoryState = function (state) {
       );
     }
   });
-  return { url, openModals: modals };
+  return { url, sessionId, openModals: modals };
 };
 
 // =============================================================================
@@ -92,7 +92,6 @@ const {
 } = app.ports;
 
 window.addEventListener('popstate', (e) => {
-  console.log('Popstate called');
   const histState = HistoryState(e.state);
   onPopState.send(histState);
 });

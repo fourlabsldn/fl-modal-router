@@ -7738,13 +7738,12 @@ const Modal = function ({ selector, targetUrl } = {}) {
  * @param  {Array<Modal>}
  */
 const HistoryState = function (state) {
-  const { url, openModals } = state || {};
+  const { url, openModals, sessionId } = state || {};
   if (!url) {
     // It was not set by Elm
     return null;
   }
 
-  console.log(openModals);
   const modals = parseElmList(openModals).map(Modal);
   modals.forEach(m => {
     if (!m) {
@@ -7754,7 +7753,7 @@ const HistoryState = function (state) {
       );
     }
   });
-  return { url, openModals: modals };
+  return { url, sessionId, openModals: modals };
 };
 
 
@@ -7764,12 +7763,10 @@ const HistoryState = function (state) {
 const _user$project$Native_History = {
   pushState: (state) => {
     const histState = HistoryState(state);
-    console.log('Pushing state', histState);
     window.history.pushState(histState, 'modal-router-state', histState.url)
   },
   replaceState: (state) => {
     const histState = HistoryState(state);
-    console.log('Replacing state by:', histState);
     window.history.replaceState(histState, 'modal-router-state', histState.url)
   },
   getState: () => HistoryState(window.history.state),
@@ -7844,9 +7841,9 @@ var _user$project$History$pushState = function (hist) {
 		_user$project$Native_History.pushState(
 			A2(_elm_lang$core$Debug$log, 'Pushing history: ', hist)));
 };
-var _user$project$History$HistoryState = F2(
-	function (a, b) {
-		return {openModals: a, url: b};
+var _user$project$History$HistoryState = F3(
+	function (a, b, c) {
+		return {openModals: a, url: b, sessionId: c};
 	});
 
 var _user$project$ModalRouter_Types$Model = F3(
@@ -7876,7 +7873,7 @@ var _user$project$ModalRouter_State$toHistoryState = function (_p0) {
 				return x.targetUrl;
 			},
 			_elm_lang$core$List$head(_p2)));
-	return A2(_user$project$History$HistoryState, _p2, stateUrl);
+	return A3(_user$project$History$HistoryState, _p2, stateUrl, _p1.sessionId);
 };
 var _user$project$ModalRouter_State$pushState = function (model) {
 	return _user$project$History$pushState(
@@ -7988,7 +7985,7 @@ var _user$project$ModalRouter_State$init = function (sessionId) {
 	return {
 		ctor: '_Tuple2',
 		_0: initialModel,
-		_1: _user$project$ModalRouter_State$pushState(initialModel)
+		_1: _user$project$ModalRouter_State$replaceState(initialModel)
 	};
 };
 var _user$project$ModalRouter_State$onPopState = _elm_lang$core$Native_Platform.incomingPort(
@@ -8031,8 +8028,13 @@ var _user$project$ModalRouter_State$onPopState = _elm_lang$core$Native_Platform.
 							_elm_lang$core$Json_Decode$andThen,
 							A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
 							function (url) {
-								return _elm_lang$core$Json_Decode$succeed(
-									{openModals: openModals, url: url});
+								return A2(
+									_elm_lang$core$Json_Decode$andThen,
+									A2(_elm_lang$core$Json_Decode_ops[':='], 'sessionId', _elm_lang$core$Json_Decode$int),
+									function (sessionId) {
+										return _elm_lang$core$Json_Decode$succeed(
+											{openModals: openModals, url: url, sessionId: sessionId});
+									});
 							});
 					}))
 			])));

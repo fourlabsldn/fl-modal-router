@@ -59,13 +59,12 @@ const Modal = function ({ selector, targetUrl } = {}) {
  * @param  {Array<Modal>}
  */
 const HistoryState = function (state) {
-  const { url, openModals } = state || {};
+  const { url, openModals, sessionId } = state || {};
   if (!url) {
     // It was not set by Elm
     return null;
   }
 
-  console.log(openModals);
   const modals = parseElmList(openModals).map(Modal);
   modals.forEach(m => {
     if (!m) {
@@ -75,7 +74,7 @@ const HistoryState = function (state) {
       );
     }
   });
-  return { url, openModals: modals };
+  return { url, sessionId, openModals: modals };
 };
 
 
@@ -85,12 +84,10 @@ const HistoryState = function (state) {
 const _user$project$Native_History = {
   pushState: (state) => {
     const histState = HistoryState(state);
-    console.log('Pushing state', histState);
     window.history.pushState(histState, 'modal-router-state', histState.url)
   },
   replaceState: (state) => {
     const histState = HistoryState(state);
-    console.log('Replacing state by:', histState);
     window.history.replaceState(histState, 'modal-router-state', histState.url)
   },
   getState: () => HistoryState(window.history.state),

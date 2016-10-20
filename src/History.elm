@@ -10,6 +10,7 @@ import Task exposing (Task)
 type alias HistoryState =
     { openModals : List Modal.Modal
     , url : Uri
+    , sessionId: Int
     }
 
 
