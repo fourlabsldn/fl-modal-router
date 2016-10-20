@@ -2,6 +2,7 @@ port module ModalRouter.State exposing (init, update, subscriptions)
 
 import ModalRouter.Types exposing (..)
 import String
+import Task
 import History exposing ( HistoryState )
 import Modal exposing ( Modal )
 import Uri exposing ( Uri )
@@ -15,7 +16,7 @@ placeholderUrl =
 
 init : (Model, Cmd Msg)
 init =
-    (Model [], Cmd.none)
+    (Model [], Task.perform identity PopState (Task.succeed Nothing))
 
 
 

@@ -7697,6 +7697,23 @@ const fromMaybe = val => {
   return val._0 ? val._0 : null;
 };
 
+const parseElmList = l => {
+  if (Array.isArray(l)) {
+    return l;
+  }
+
+  let list = []
+  let counter = 0
+  let key = `_${counter}`;
+  while (l[key] !== undefined && l[key].ctor !== '[]') {
+    list = list.concat(l[key]);
+    counter = counter + 1
+    key = `_${counter}`;
+  }
+
+  return list;
+}
+
 /**
  * Creates an Elm acceptable Modal object
  * @method Modal
@@ -7720,16 +7737,15 @@ const Modal = function ({ selector, targetUrl } = {}) {
  * @param  {String} url
  * @param  {Array<Modal>}
  */
-const HistoryState = function ({ url, openModals = [] } = {}) {
+const HistoryState = function (state) {
+  const { url, openModals } = state || {};
   if (!url) {
     // It was not set by Elm
     return null;
   }
 
   console.log(openModals);
-  openModals = Array.isArray(openModals) ? openModals : [];
-
-  const modals = openModals.map(Modal);
+  const modals = parseElmList(openModals).map(Modal);
   modals.forEach(m => {
     if (!m) {
       throw new Error(
@@ -7748,12 +7764,12 @@ const HistoryState = function ({ url, openModals = [] } = {}) {
 const _user$project$Native_History = {
   pushState: (state) => {
     const histState = HistoryState(state);
-    console.log('Pushing state');
+    console.log('Pushing state', histState);
     window.history.pushState(histState, 'modal-router-state', histState.url)
   },
   replaceState: (state) => {
     const histState = HistoryState(state);
-    console.log('Replacing state by:', state.url);
+    console.log('Replacing state by:', histState);
     window.history.replaceState(histState, 'modal-router-state', histState.url)
   },
   getState: () => HistoryState(window.history.state),
@@ -7890,7 +7906,11 @@ var _user$project$ModalRouter_State$init = {
 	_0: _user$project$ModalRouter_Types$Model(
 		_elm_lang$core$Native_List.fromArray(
 			[])),
-	_1: _elm_lang$core$Platform_Cmd$none
+	_1: A3(
+		_elm_lang$core$Task$perform,
+		_elm_lang$core$Basics$identity,
+		_user$project$ModalRouter_Types$PopState,
+		_elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing))
 };
 var _user$project$ModalRouter_State$placeholderUrl = 'index.html';
 var _user$project$ModalRouter_State$createState = F2(

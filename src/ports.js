@@ -18,6 +18,23 @@ const fromMaybe = val => {
   return val._0 ? val._0 : null;
 };
 
+const parseElmList = l => {
+  if (Array.isArray(l)) {
+    return l;
+  }
+
+  let list = []
+  let counter = 0
+  let key = `_${counter}`;
+  while (l[key] !== undefined && l[key].ctor !== '[]') {
+    list = list.concat(l[key]);
+    counter = counter + 1
+    key = `_${counter}`;
+  }
+
+  return list;
+}
+
 /**
  * Creates an Elm acceptable Modal object
  * @method Modal
@@ -36,17 +53,20 @@ const Modal = function ({ selector, targetUrl } = {}) {
 
 /**
  * Creates an Elm acceptable HistoryState object
+ * This is used to make the link Elm-JS and JS-Elm
  * @method HistoryState
  * @param  {String} url
  * @param  {Array<Modal>}
  */
-const HistoryState = function ({ url, openModals = [] } = {}) {
+const HistoryState = function (state) {
+  const { url, openModals } = state || {};
   if (!url) {
     // It was not set by Elm
     return null;
   }
 
-  const modals = openModals.map(Modal);
+  console.log(openModals);
+  const modals = parseElmList(openModals).map(Modal);
   modals.forEach(m => {
     if (!m) {
       throw new Error(
@@ -57,7 +77,6 @@ const HistoryState = function ({ url, openModals = [] } = {}) {
   });
   return { url, openModals: modals };
 };
-
 
 // =============================================================================
 
