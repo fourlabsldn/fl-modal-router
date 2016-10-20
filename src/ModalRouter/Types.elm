@@ -8,7 +8,7 @@ import History exposing ( HistoryState )
 type Msg
     = PopState (Maybe HistoryState)
     | ModalOpen Modal
-    | ModalClose Modal -- this string is just to comply with the subscription of onModalClose
+    | ModalClose String -- this string is just to comply with the subscription of onModalClose
 
 
 

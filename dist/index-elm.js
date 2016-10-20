@@ -7719,13 +7719,20 @@ var _user$project$Native_Modal = {
 };
 
 var _user$project$Modal$getOpen = function (a) {
-	return _user$project$Native_Modal.getOpen(a);
+	return _user$project$Native_Modal.getOpen(
+		{ctor: '_Tuple0'});
 };
 var _user$project$Modal$close = function (modal) {
-	return _user$project$Native_Modal.close(modal.selector);
+	return A2(
+		_elm_lang$core$Basics$always,
+		_elm_lang$core$Platform_Cmd$none,
+		_user$project$Native_Modal.close(modal.selector));
 };
 var _user$project$Modal$open = function (modal) {
-	return _user$project$Native_Modal.open(modal.selector);
+	return A2(
+		_elm_lang$core$Basics$always,
+		_elm_lang$core$Platform_Cmd$none,
+		_user$project$Native_Modal.open(modal.selector));
 };
 var _user$project$Modal$Modal = F2(
 	function (a, b) {
@@ -7748,12 +7755,16 @@ var _user$project$History$getState = function (a) {
 	return _user$project$Native_History.getState(a);
 };
 var _user$project$History$replaceState = function (hist) {
-	var a = _user$project$Native_History.replaceState(hist);
-	return _elm_lang$core$Platform_Cmd$none;
+	return A2(
+		_elm_lang$core$Basics$always,
+		_elm_lang$core$Platform_Cmd$none,
+		_user$project$Native_History.replaceState(hist));
 };
 var _user$project$History$pushState = function (hist) {
-	var a = _user$project$Native_History.pushState(hist);
-	return _elm_lang$core$Platform_Cmd$none;
+	return A2(
+		_elm_lang$core$Basics$always,
+		_elm_lang$core$Platform_Cmd$none,
+		_user$project$Native_History.pushState(hist));
 };
 var _user$project$History$HistoryState = F2(
 	function (a, b) {
@@ -7787,7 +7798,7 @@ var _user$project$ModalRouter_State$applyState = function (state) {
 			[
 				_user$project$History$replaceState(state),
 				function () {
-				var _p0 = state.modal;
+				var _p0 = A2(_elm_lang$core$Debug$log, 'popped modal', state.modal);
 				if (_p0.ctor === 'Nothing') {
 					return _elm_lang$core$Platform_Cmd$none;
 				} else {
@@ -7796,6 +7807,18 @@ var _user$project$ModalRouter_State$applyState = function (state) {
 			}()
 			]));
 };
+var _user$project$ModalRouter_State$isModalOpen = F2(
+	function (openModals, selector) {
+		return A2(
+			_elm_lang$core$List$member,
+			selector,
+			A2(
+				_elm_lang$core$List$map,
+				function (m) {
+					return m.selector;
+				},
+				openModals));
+	});
 var _user$project$ModalRouter_State$init = {
 	ctor: '_Tuple2',
 	_0: _user$project$ModalRouter_Types$Model(
@@ -7833,7 +7856,10 @@ var _user$project$ModalRouter_State$update = F2(
 					return {
 						ctor: '_Tuple2',
 						_0: model,
-						_1: A2(_user$project$ModalRouter_State$setCurrentState, _elm_lang$core$Maybe$Nothing, _user$project$ModalRouter_State$placeholderUrl)
+						_1: A2(
+							_user$project$ModalRouter_State$setCurrentState,
+							_elm_lang$core$List$head(model.openModals),
+							_user$project$ModalRouter_State$placeholderUrl)
 					};
 				} else {
 					return {
@@ -7862,11 +7888,11 @@ var _user$project$ModalRouter_State$update = F2(
 				var listWithoutModal = A2(
 					_elm_lang$core$List$filter,
 					function (n) {
-						return !_elm_lang$core$Native_Utils.eq(n, _p4);
+						return !_elm_lang$core$Native_Utils.eq(n.selector, _p4);
 					},
 					model.openModals);
 				var modalRegisteredAsClosed = _elm_lang$core$Basics$not(
-					A2(_elm_lang$core$List$member, _p4, model.openModals));
+					A2(_user$project$ModalRouter_State$isModalOpen, model.openModals, _p4));
 				return modalRegisteredAsClosed ? {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none} : {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -7953,28 +7979,7 @@ var _user$project$ModalRouter_State$onModalOpen = _elm_lang$core$Native_Platform
 						{selector: selector, targetUrl: targetUrl});
 				});
 		}));
-var _user$project$ModalRouter_State$onModalClose = _elm_lang$core$Native_Platform.incomingPort(
-	'onModalClose',
-	A2(
-		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'selector', _elm_lang$core$Json_Decode$string),
-		function (selector) {
-			return A2(
-				_elm_lang$core$Json_Decode$andThen,
-				A2(
-					_elm_lang$core$Json_Decode_ops[':='],
-					'targetUrl',
-					_elm_lang$core$Json_Decode$oneOf(
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
-								A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string)
-							]))),
-				function (targetUrl) {
-					return _elm_lang$core$Json_Decode$succeed(
-						{selector: selector, targetUrl: targetUrl});
-				});
-		}));
+var _user$project$ModalRouter_State$onModalClose = _elm_lang$core$Native_Platform.incomingPort('onModalClose', _elm_lang$core$Json_Decode$string);
 var _user$project$ModalRouter_State$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		_elm_lang$core$Native_List.fromArray(

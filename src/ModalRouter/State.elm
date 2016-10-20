@@ -26,7 +26,7 @@ init =
 
 port onPopState : (Maybe HistoryState -> msg) -> Sub msg
 port onModalOpen : (Modal -> msg) -> Sub msg
-port onModalClose : (Modal -> msg) -> Sub msg
+port onModalClose : (String -> msg) -> Sub msg -- the string is the modal selector
 
 
 
@@ -50,7 +50,9 @@ update msg model =
         PopState state ->
             case state of
                 Nothing ->
-                    ( model , setCurrentState Nothing placeholderUrl )
+                    ( model
+                    , setCurrentState ( List.head model.openModals ) placeholderUrl
+                    )
 
                 Just s ->
                   ( model , applyState s )
@@ -68,14 +70,14 @@ update msg model =
                     , createState ( Just modal ) Nothing
                     )
 
-        ModalClose modal ->
+        ModalClose selector ->
             let
                 modalRegisteredAsClosed =
-                    List.member modal model.openModals
+                    isModalOpen model.openModals selector
                         |> not
 
                 listWithoutModal =
-                    List.filter (\n -> n /= modal ) model.openModals
+                    List.filter (\n -> n.selector /= selector ) model.openModals
             in
                 if modalRegisteredAsClosed then
                     ( model, Cmd.none )
@@ -87,11 +89,19 @@ update msg model =
 
 
 
+isModalOpen : (List Modal) -> String -> Bool
+isModalOpen openModals selector =
+    openModals
+        |> List.map (\m -> m.selector)
+        |> List.member selector
+
+
+
 applyState: HistoryState -> Cmd Msg
 applyState state =
   Cmd.batch
     [ History.replaceState state
-    , case state.modal of
+    , case Debug.log "popped modal" state.modal of
         Nothing ->
           Cmd.none
 

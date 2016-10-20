@@ -16,19 +16,16 @@ type alias HistoryState =
 
 pushState : HistoryState -> Cmd msg
 pushState hist =
-    let
-        a = Native.History.pushState hist
-    in
-        Cmd.none
+    Native.History.pushState hist
+        |> always Cmd.none
+
 
 
 
 replaceState : HistoryState -> Cmd msg
 replaceState hist =
-    let
-        a = Native.History.replaceState hist
-    in
-        Cmd.none
+    Native.History.replaceState hist
+        |> always Cmd.none
 
 
 
