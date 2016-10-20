@@ -15,9 +15,15 @@ init sessionId =
     let
         currentUrl =
             Uri.getCurrent ()
+
+        currentOpenModals =
+            []
+
+        initialModel =
+            Model currentOpenModals currentUrl sessionId
     in
-        ( Model [] currentUrl sessionId
-        , Task.perform identity PopState (Task.succeed Nothing)
+        ( initialModel
+        , pushState initialModel
         )
 
 
@@ -53,9 +59,7 @@ update msg model =
         PopState state ->
             case state of
                 Nothing ->
-                    ( model
-                    , setCurrentState model.openModals model.initialUrl
-                    )
+                    ( model, replaceState model )
 
                 Just s ->
                     ( { model | openModals = s.openModals }
@@ -67,16 +71,14 @@ update msg model =
                 modalRegisteredAsOpen =
                     isModalOpen model.openModals modal.selector
 
-                plusNewModal =
-                    modal :: model.openModals
+                modelPlusModal =
+                    { model | openModals = modal :: model.openModals }
             in
                 if modalRegisteredAsOpen then
                     ( model , Cmd.none )
 
                 else
-                    ( { model | openModals = plusNewModal }
-                    , createState plusNewModal model.initialUrl
-                    )
+                    ( modelPlusModal, pushState modelPlusModal )
 
         ModalClose selector ->
             let
@@ -86,14 +88,15 @@ update msg model =
 
                 listWithoutModal =
                     List.filter (\n -> n.selector /= selector ) model.openModals
+
+                modelMinusModal =
+                    { model | openModals = listWithoutModal }
             in
                 if modalRegisteredAsClosed then
                     ( model, Cmd.none )
 
                 else
-                    ( { model | openModals = listWithoutModal }
-                    , createState listWithoutModal model.initialUrl
-                    )
+                    ( modelMinusModal, pushState modelMinusModal )
 
 
 
@@ -126,19 +129,24 @@ missingIn a b =
 
 
 
--- This does not trigger a popstate
-createState: List Modal -> String -> Cmd msg
-createState openModals defaultUrl =
+toHistoryState : Model -> HistoryState
+toHistoryState { openModals, initialUrl } =
     let
         stateUrl =
             List.head openModals
                 |> (flip Maybe.andThen) (\x -> x.targetUrl)
-                |> Maybe.withDefault defaultUrl
+                |> Maybe.withDefault initialUrl
     in
-        History.pushState ( HistoryState openModals stateUrl )
+        HistoryState openModals stateUrl
 
 
 
-setCurrentState: List Modal -> String -> Cmd msg
-setCurrentState openModals url =
-  History.replaceState ( HistoryState openModals url )
+pushState : Model -> Cmd Msg
+pushState model =
+    History.pushState <| toHistoryState model
+
+
+
+replaceState : Model -> Cmd Msg
+replaceState model =
+    History.replaceState <| toHistoryState model
