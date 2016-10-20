@@ -3,3 +3,4 @@ bower_components/
 .sass-cache/
 _SpecRunner.html
 npm-debug*
+elm-stuff/
