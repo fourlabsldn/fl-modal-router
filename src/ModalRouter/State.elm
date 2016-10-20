@@ -24,9 +24,7 @@ init sessionId =
     in
         -- When the page is first loaded we replace the current state for one
         -- generated using the current sessionId
-        ( initialModel
-        , replaceState initialModel
-        )
+        ( initialModel, replaceState initialModel )
 
 
 
@@ -38,6 +36,7 @@ init sessionId =
 port onPopState : (Maybe HistoryState -> msg) -> Sub msg
 port onModalOpen : (Modal -> msg) -> Sub msg
 port onModalClose : (String -> msg) -> Sub msg -- the string is the modal selector
+port reload : () -> Cmd msg -- reloads the page
 
 
 
@@ -64,9 +63,19 @@ update msg model =
                     ( model, replaceState model )
 
                 Just s ->
-                    ( { model | openModals = s.openModals }
-                    , conformWindowToState s model
-                    )
+                    let
+                        newModel = { model | openModals = s.openModals }
+                    in
+                        if s.sessionId == model.sessionId then
+                            ( newModel, conformWindowToState s model )
+
+                        else
+                            ( newModel
+                            , Cmd.batch
+                                [ History.replaceState s
+                                , reload ()
+                                ]
+                            )
 
         ModalOpen modal ->
             let
@@ -110,6 +119,7 @@ isModalOpen openModals selector =
 
 
 
+-- The model passed represents the current window state, which must be updated
 conformWindowToState: HistoryState -> Model -> Cmd Msg
 conformWindowToState state model =
     let

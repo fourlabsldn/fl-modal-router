@@ -115,3 +115,7 @@ $(document.body)
     }
     onModalClose.send(modal.selector);
   });
+
+app.ports.reload.subscribe(() => {
+  window.location.reload();
+});
