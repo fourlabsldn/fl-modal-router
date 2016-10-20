@@ -80,7 +80,9 @@ const HistoryState = function (state) {
 
 // =============================================================================
 
-const app = Elm.ModalRouter.fullscreen();
+// We will provide a unique id for our app
+const sessionId = Date.now();
+const app = Elm.ModalRouter.fullscreen(sessionId);
 
 // We send stuff to Elm with suggestions
 const {

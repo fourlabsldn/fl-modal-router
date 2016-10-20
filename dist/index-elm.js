@@ -7849,9 +7849,9 @@ var _user$project$History$HistoryState = F2(
 		return {openModals: a, url: b};
 	});
 
-var _user$project$ModalRouter_Types$Model = F2(
-	function (a, b) {
-		return {openModals: a, initialUrl: b};
+var _user$project$ModalRouter_Types$Model = F3(
+	function (a, b, c) {
+		return {openModals: a, initialUrl: b, sessionId: c};
 	});
 var _user$project$ModalRouter_Types$ModalClose = function (a) {
 	return {ctor: 'ModalClose', _0: a};
@@ -7905,8 +7905,7 @@ var _user$project$ModalRouter_State$conformWindowToState = F2(
 						A2(_elm_lang$core$List$map, _user$project$Modal$close, modalsToClose),
 						_elm_lang$core$Native_List.fromArray(
 						[
-							_user$project$History$replaceState(
-							A2(_elm_lang$core$Debug$log, 'popped historyState: ', state))
+							_user$project$History$replaceState(state)
 						])
 					])));
 	});
@@ -7974,23 +7973,24 @@ var _user$project$ModalRouter_State$update = F2(
 				};
 		}
 	});
-var _user$project$ModalRouter_State$init = function () {
+var _user$project$ModalRouter_State$init = function (sessionId) {
 	var currentUrl = _user$project$Uri$getCurrent(
 		{ctor: '_Tuple0'});
 	return {
 		ctor: '_Tuple2',
-		_0: A2(
+		_0: A3(
 			_user$project$ModalRouter_Types$Model,
 			_elm_lang$core$Native_List.fromArray(
 				[]),
-			currentUrl),
+			currentUrl,
+			sessionId),
 		_1: A3(
 			_elm_lang$core$Task$perform,
 			_elm_lang$core$Basics$identity,
 			_user$project$ModalRouter_Types$PopState,
 			_elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing))
 	};
-}();
+};
 var _user$project$ModalRouter_State$onPopState = _elm_lang$core$Native_Platform.incomingPort(
 	'onPopState',
 	_elm_lang$core$Json_Decode$oneOf(
@@ -8078,8 +8078,9 @@ var _user$project$ModalRouter$view = function (model) {
 			[]));
 };
 var _user$project$ModalRouter$main = {
-	main: _elm_lang$html$Html_App$program(
-		{init: _user$project$ModalRouter_State$init, view: _user$project$ModalRouter$view, update: _user$project$ModalRouter_State$update, subscriptions: _user$project$ModalRouter_State$subscriptions})
+	main: _elm_lang$html$Html_App$programWithFlags(
+		{init: _user$project$ModalRouter_State$init, view: _user$project$ModalRouter$view, update: _user$project$ModalRouter_State$update, subscriptions: _user$project$ModalRouter_State$subscriptions}),
+	flags: _elm_lang$core$Json_Decode$int
 };
 
 var Elm = {};

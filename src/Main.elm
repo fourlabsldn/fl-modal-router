@@ -8,7 +8,7 @@ import Html.App as App
 
 
 main =
-    App.program
+    App.programWithFlags
         { init = init
         , view = view
         , update = update

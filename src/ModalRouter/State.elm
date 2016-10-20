@@ -10,13 +10,13 @@ import Maybe
 
 
 
-init : (Model, Cmd Msg)
-init =
+init : Int -> (Model, Cmd Msg)
+init sessionId =
     let
         currentUrl =
             Uri.getCurrent ()
     in
-        ( Model [] currentUrl
+        ( Model [] currentUrl sessionId
         , Task.perform identity PopState (Task.succeed Nothing)
         )
 
@@ -93,7 +93,7 @@ update msg model =
                 else
                     ( { model | openModals = listWithoutModal }
                     , createState listWithoutModal model.initialUrl
-                    ) -- TODO: make this url be the last one without a modal
+                    )
 
 
 
@@ -113,7 +113,7 @@ conformWindowToState state model =
     in
         [ List.map Modal.open modalsToOpen
         , List.map Modal.close modalsToClose
-        , [ History.replaceState (Debug.log "popped historyState: " state) ]
+        , [ History.replaceState state ]
         ]
             |> List.concat
             |> Cmd.batch
