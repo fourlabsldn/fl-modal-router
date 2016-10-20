@@ -8,15 +8,15 @@ import Task exposing (Task)
 
 
 type alias HistoryState =
-    { modal: Maybe Modal.Modal
-    , url: Uri
+    { openModals : List Modal.Modal
+    , url : Uri
     }
 
 
 
 pushState : HistoryState -> Cmd msg
 pushState hist =
-    Native.History.pushState hist
+    Native.History.pushState (Debug.log "Pushing history: " hist)
         |> always Cmd.none
 
 

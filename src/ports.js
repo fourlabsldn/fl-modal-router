@@ -1,21 +1,63 @@
 /* globals Elm, $ */
-/* eslint-disable new-cap */
+/* eslint-disable new-cap, no-underscore-dangle */
 
-const getMaybe = val => {
-  return val && val._0
-    ? val._0
-    : null;
-}
+/**
+ * If it's not a Maybe, returns whatever value that is, if it is
+ * a Maybe, returns `value` for `Just value` and `null` for `Nothing`
+ * @method fromMaybe
+ * @param  {Object<Any> | Any } val
+ * @return {Any}
+ */
+const fromMaybe = val => {
+  const isMaybe = val && val.ctor;
 
-const Modal = function (selector, targetUrl) {
-  return selector ? { selector, targetUrl } : null;
+  if (!isMaybe) {
+    return val;
+  }
+
+  return val._0 ? val._0 : null;
 };
 
-const HistoryState = function ({ url, selector, targetUrl } = {}) {
-  return url
-    ? { url, modal: Modal(selector, targetUrl) }
-    : null;
+/**
+ * Creates an Elm acceptable Modal object
+ * @method Modal
+ * @param  {String} selector
+ * @param  {String | Maybe String} targetUrl
+ */
+const Modal = function ({ selector, targetUrl } = {}) {
+  if (!selector) {
+    // It was not set by Elm
+    return null;
+  }
+
+  const url = fromMaybe(targetUrl);
+  return { selector, targetUrl: url };
 };
+
+/**
+ * Creates an Elm acceptable HistoryState object
+ * @method HistoryState
+ * @param  {String} url
+ * @param  {Array<Modal>}
+ */
+const HistoryState = function ({ url, openModals = [] } = {}) {
+  if (!url) {
+    // It was not set by Elm
+    return null;
+  }
+
+  const modals = openModals.map(Modal);
+  modals.forEach(m => {
+    if (!m) {
+      throw new Error(
+        'A null modal was found in a history state. '
+        + `Something is wrong. Here are all the modals ${JSON.stringify(modals)}`
+      );
+    }
+  });
+  return { url, openModals: modals };
+};
+
 
 // =============================================================================
 
@@ -30,16 +72,7 @@ const {
 
 window.addEventListener('popstate', (e) => {
   console.log('Popstate called');
-  const newState = e.state;
-  const modal = newState ? getMaybe(newState.modal) : {};
-
-  const histState = newState
-    ? HistoryState({
-        url: newState.url,
-        selector: modal.selector,
-        targetUrl: getMaybe(modal.targetUrl)
-      })
-    : null;
+  const histState = HistoryState(e.state);
   onPopState.send(histState);
 });
 
@@ -48,8 +81,8 @@ function getModalInfo(e) {
       ? e.relatedTarget.getAttribute('href')
       : null;
 
-  const modalSelector = `#${e.target.id}`;
-  const modalInfo = Modal(modalSelector, targetUrl);
+  const selector = `#${e.target.id}`;
+  const modalInfo = Modal({ selector, targetUrl });
   return modalInfo;
 }
 

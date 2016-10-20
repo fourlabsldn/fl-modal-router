@@ -7678,35 +7678,85 @@ var _elm_lang$html$Html_App$beginnerProgram = function (_p1) {
 var _elm_lang$html$Html_App$map = _elm_lang$virtual_dom$VirtualDom$map;
 
 /* globals Elm */
-/* eslint-disable new-cap */
+/* eslint-disable new-cap, no-underscore-dangle */
 
-const Modal = function (selector, targetUrl) {
-  return selector ? { selector, targetUrl } : null;
+/**
+ * If it's not a Maybe, returns whatever value that is, if it is
+ * a Maybe, returns `value` for `Just value` and `null` for `Nothing`
+ * @method fromMaybe
+ * @param  {Object<Any> | Any } val
+ * @return {Any}
+ */
+const fromMaybe = val => {
+  const isMaybe = val && val.ctor;
+
+  if (!isMaybe) {
+    return val;
+  }
+
+  return val._0 ? val._0 : null;
 };
 
-const HistoryState = function ({ url, selector, targetUrl } = {}) {
-  return url
-    ? { url, modal: Modal(selector, targetUrl) }
-    : null;
+/**
+ * Creates an Elm acceptable Modal object
+ * @method Modal
+ * @param  {String} selector
+ * @param  {String | Maybe String} targetUrl
+ */
+const Modal = function ({ selector, targetUrl } = {}) {
+  if (!selector) {
+    // It was not set by Elm
+    return null;
+  }
+
+  const url = fromMaybe(targetUrl);
+  return { selector, targetUrl: url };
 };
+
+/**
+ * Creates an Elm acceptable HistoryState object
+ * This is used to make the link Elm-JS and JS-Elm
+ * @method HistoryState
+ * @param  {String} url
+ * @param  {Array<Modal>}
+ */
+const HistoryState = function ({ url, openModals = [] } = {}) {
+  if (!url) {
+    // It was not set by Elm
+    return null;
+  }
+
+  console.log(openModals);
+  openModals = Array.isArray(openModals) ? openModals : [];
+
+  const modals = openModals.map(Modal);
+  modals.forEach(m => {
+    if (!m) {
+      throw new Error(
+        'A null modal was found in a history state. '
+        + `Something is wrong. Here are all the modals ${JSON.stringify(modals)}`
+      );
+    }
+  });
+  return { url, openModals: modals };
+};
+
+
+// ============================ ELM NATIVE =====================================
+
 
 const _user$project$Native_History = {
   pushState: (state) => {
+    const histState = HistoryState(state);
     console.log('Pushing state');
-    window.history.pushState(state, 'modal-router-state', state.url)
+    window.history.pushState(histState, 'modal-router-state', histState.url)
   },
   replaceState: (state) => {
+    const histState = HistoryState(state);
     console.log('Replacing state by:', state.url);
-    window.history.replaceState(state, 'modal-router-state', state.url)
+    window.history.replaceState(histState, 'modal-router-state', histState.url)
   },
-  getState: () => {
-    const windowState = window.history.state;
-    const histState = windowState
-      ? new HistoryState(windowState.url, windowState.selector, windowState.targetUrl)
-      : null;
-
-    return histState;
-  },
+  getState: () => HistoryState(window.history.state),
 };
 
 /* global $*/
@@ -7770,11 +7820,12 @@ var _user$project$History$pushState = function (hist) {
 	return A2(
 		_elm_lang$core$Basics$always,
 		_elm_lang$core$Platform_Cmd$none,
-		_user$project$Native_History.pushState(hist));
+		_user$project$Native_History.pushState(
+			A2(_elm_lang$core$Debug$log, 'Pushing history: ', hist)));
 };
 var _user$project$History$HistoryState = F2(
 	function (a, b) {
-		return {modal: a, url: b};
+		return {openModals: a, url: b};
 	});
 
 var _user$project$ModalRouter_Types$Model = function (a) {
@@ -7791,42 +7842,37 @@ var _user$project$ModalRouter_Types$PopState = function (a) {
 };
 
 var _user$project$ModalRouter_State$setCurrentState = F2(
-	function (modal, url) {
+	function (openModals, url) {
 		return _user$project$History$replaceState(
-			A2(_user$project$History$HistoryState, modal, url));
+			A2(_user$project$History$HistoryState, openModals, url));
 	});
-var _user$project$ModalRouter_State$conformModelToState = F2(
+var _user$project$ModalRouter_State$missingIn = F2(
+	function (a, b) {
+		return A2(
+			_elm_lang$core$List$filter,
+			function (x) {
+				return _elm_lang$core$Basics$not(
+					A2(_elm_lang$core$List$member, x, b));
+			},
+			a);
+	});
+var _user$project$ModalRouter_State$conformWindowToState = F2(
 	function (state, model) {
-		var openModals = function () {
-			var _p0 = state.modal;
-			if (_p0.ctor === 'Nothing') {
-				return _elm_lang$core$Native_List.fromArray(
-					[]);
-			} else {
-				var _p1 = _p0._0;
-				return A2(_elm_lang$core$List$member, _p1, model.openModals) ? model.openModals : A2(_elm_lang$core$List_ops['::'], _p1, model.openModals);
-			}
-		}();
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{openModals: openModals});
+		var modalsToClose = A2(_user$project$ModalRouter_State$missingIn, model.openModals, state.openModals);
+		var modalsToOpen = A2(_user$project$ModalRouter_State$missingIn, state.openModals, model.openModals);
+		return _elm_lang$core$Platform_Cmd$batch(
+			_elm_lang$core$List$concat(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(_elm_lang$core$List$map, _user$project$Modal$open, modalsToOpen),
+						A2(_elm_lang$core$List$map, _user$project$Modal$close, modalsToClose),
+						_elm_lang$core$Native_List.fromArray(
+						[
+							_user$project$History$replaceState(
+							A2(_elm_lang$core$Debug$log, 'popped historyState: ', state))
+						])
+					])));
 	});
-var _user$project$ModalRouter_State$conformWindowToState = function (state) {
-	return _elm_lang$core$Platform_Cmd$batch(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_user$project$History$replaceState(
-				A2(_elm_lang$core$Debug$log, 'popped historyState: ', state)),
-				function () {
-				var _p2 = state.modal;
-				if (_p2.ctor === 'Nothing') {
-					return _elm_lang$core$Platform_Cmd$none;
-				} else {
-					return _user$project$Modal$open(_p2._0);
-				}
-			}()
-			]));
-};
 var _user$project$ModalRouter_State$isModalOpen = F2(
 	function (openModals, selector) {
 		return A2(
@@ -7848,81 +7894,71 @@ var _user$project$ModalRouter_State$init = {
 };
 var _user$project$ModalRouter_State$placeholderUrl = 'index.html';
 var _user$project$ModalRouter_State$createState = F2(
-	function (modal, url) {
+	function (openModals, pageUrl) {
+		var firstModalUrl = A2(
+			_elm_lang$core$Maybe$andThen,
+			_elm_lang$core$List$head(openModals),
+			function (x) {
+				return x.targetUrl;
+			});
 		var stateUrl = A2(
 			_elm_lang$core$Maybe$withDefault,
 			_user$project$ModalRouter_State$placeholderUrl,
 			_elm_lang$core$Maybe$oneOf(
 				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$core$Maybe$andThen,
-						modal,
-						function (x) {
-							return x.targetUrl;
-						}),
-						url
-					])));
+					[firstModalUrl, pageUrl])));
 		return _user$project$History$pushState(
-			A2(_user$project$History$HistoryState, modal, stateUrl));
+			A2(_user$project$History$HistoryState, openModals, stateUrl));
 	});
 var _user$project$ModalRouter_State$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
 			case 'PopState':
-				var _p4 = _p3._0;
-				if (_p4.ctor === 'Nothing') {
+				var _p1 = _p0._0;
+				if (_p1.ctor === 'Nothing') {
 					return {
 						ctor: '_Tuple2',
 						_0: model,
-						_1: A2(
-							_user$project$ModalRouter_State$setCurrentState,
-							_elm_lang$core$List$head(model.openModals),
-							_user$project$ModalRouter_State$placeholderUrl)
+						_1: A2(_user$project$ModalRouter_State$setCurrentState, model.openModals, _user$project$ModalRouter_State$placeholderUrl)
 					};
 				} else {
-					var _p5 = _p4._0;
+					var _p2 = _p1._0;
 					return {
 						ctor: '_Tuple2',
-						_0: A2(_user$project$ModalRouter_State$conformModelToState, _p5, model),
-						_1: _user$project$ModalRouter_State$conformWindowToState(_p5)
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{openModals: _p2.openModals}),
+						_1: A2(_user$project$ModalRouter_State$conformWindowToState, _p2, model)
 					};
 				}
 			case 'ModalOpen':
-				var _p6 = _p3._0;
-				var modalRegisteredAsOpen = A2(_user$project$ModalRouter_State$isModalOpen, model.openModals, _p6.selector);
+				var _p3 = _p0._0;
+				var plusNewModal = A2(_elm_lang$core$List_ops['::'], _p3, model.openModals);
+				var modalRegisteredAsOpen = A2(_user$project$ModalRouter_State$isModalOpen, model.openModals, _p3.selector);
 				return modalRegisteredAsOpen ? {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none} : {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{
-							openModals: A2(_elm_lang$core$List_ops['::'], _p6, model.openModals)
-						}),
-					_1: A2(
-						_user$project$ModalRouter_State$createState,
-						_elm_lang$core$Maybe$Just(_p6),
-						_elm_lang$core$Maybe$Nothing)
+						{openModals: plusNewModal}),
+					_1: A2(_user$project$ModalRouter_State$createState, plusNewModal, _elm_lang$core$Maybe$Nothing)
 				};
 			default:
-				var _p7 = _p3._0;
+				var _p4 = _p0._0;
 				var listWithoutModal = A2(
 					_elm_lang$core$List$filter,
 					function (n) {
-						return !_elm_lang$core$Native_Utils.eq(n.selector, _p7);
+						return !_elm_lang$core$Native_Utils.eq(n.selector, _p4);
 					},
 					model.openModals);
 				var modalRegisteredAsClosed = _elm_lang$core$Basics$not(
-					A2(_user$project$ModalRouter_State$isModalOpen, model.openModals, _p7));
+					A2(_user$project$ModalRouter_State$isModalOpen, model.openModals, _p4));
 				return modalRegisteredAsClosed ? {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none} : {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{openModals: listWithoutModal}),
-					_1: A2(
-						_user$project$ModalRouter_State$createState,
-						_elm_lang$core$List$head(listWithoutModal),
-						_elm_lang$core$Maybe$Nothing)
+					_1: A2(_user$project$ModalRouter_State$createState, listWithoutModal, _elm_lang$core$Maybe$Nothing)
 				};
 		}
 	});
@@ -7939,42 +7975,35 @@ var _user$project$ModalRouter_State$onPopState = _elm_lang$core$Native_Platform.
 					_elm_lang$core$Json_Decode$andThen,
 					A2(
 						_elm_lang$core$Json_Decode_ops[':='],
-						'modal',
-						_elm_lang$core$Json_Decode$oneOf(
-							_elm_lang$core$Native_List.fromArray(
-								[
-									_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
-									A2(
-									_elm_lang$core$Json_Decode$map,
-									_elm_lang$core$Maybe$Just,
-									A2(
+						'openModals',
+						_elm_lang$core$Json_Decode$list(
+							A2(
+								_elm_lang$core$Json_Decode$andThen,
+								A2(_elm_lang$core$Json_Decode_ops[':='], 'selector', _elm_lang$core$Json_Decode$string),
+								function (selector) {
+									return A2(
 										_elm_lang$core$Json_Decode$andThen,
-										A2(_elm_lang$core$Json_Decode_ops[':='], 'selector', _elm_lang$core$Json_Decode$string),
-										function (selector) {
-											return A2(
-												_elm_lang$core$Json_Decode$andThen,
-												A2(
-													_elm_lang$core$Json_Decode_ops[':='],
-													'targetUrl',
-													_elm_lang$core$Json_Decode$oneOf(
-														_elm_lang$core$Native_List.fromArray(
-															[
-																_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
-																A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string)
-															]))),
-												function (targetUrl) {
-													return _elm_lang$core$Json_Decode$succeed(
-														{selector: selector, targetUrl: targetUrl});
-												});
-										}))
-								]))),
-					function (modal) {
+										A2(
+											_elm_lang$core$Json_Decode_ops[':='],
+											'targetUrl',
+											_elm_lang$core$Json_Decode$oneOf(
+												_elm_lang$core$Native_List.fromArray(
+													[
+														_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+														A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string)
+													]))),
+										function (targetUrl) {
+											return _elm_lang$core$Json_Decode$succeed(
+												{selector: selector, targetUrl: targetUrl});
+										});
+								}))),
+					function (openModals) {
 						return A2(
 							_elm_lang$core$Json_Decode$andThen,
 							A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
 							function (url) {
 								return _elm_lang$core$Json_Decode$succeed(
-									{modal: modal, url: url});
+									{openModals: openModals, url: url});
 							});
 					}))
 			])));

@@ -51,23 +51,28 @@ update msg model =
             case state of
                 Nothing ->
                     ( model
-                    , setCurrentState ( List.head model.openModals ) placeholderUrl
+                    , setCurrentState model.openModals placeholderUrl
                     )
 
                 Just s ->
-                  ( conformModelToState s model , conformWindowToState s )
+                    ( { model | openModals = s.openModals }
+                    , conformWindowToState s model
+                    )
 
         ModalOpen modal ->
             let
                 modalRegisteredAsOpen =
                     isModalOpen model.openModals modal.selector
+
+                plusNewModal =
+                    modal :: model.openModals
             in
                 if modalRegisteredAsOpen then
                     ( model , Cmd.none )
 
                 else
-                    ( { model | openModals = (modal :: model.openModals) }
-                    , createState ( Just modal ) Nothing
+                    ( { model | openModals = plusNewModal }
+                    , createState plusNewModal Nothing
                     )
 
         ModalClose selector ->
@@ -84,7 +89,7 @@ update msg model =
 
                 else
                     ( { model | openModals = listWithoutModal }
-                    , createState ( List.head listWithoutModal ) Nothing
+                    , createState listWithoutModal Nothing
                     ) -- TODO: make this url be the last one without a modal
 
 
@@ -97,54 +102,42 @@ isModalOpen openModals selector =
 
 
 
-conformWindowToState: HistoryState -> Cmd Msg
-conformWindowToState state =
-  Cmd.batch
-    [ History.replaceState (Debug.log "popped historyState: " state)
-    , case state.modal of
-        Nothing ->
-          Cmd.none
-
-        Just modal ->
-          Modal.open modal
-    ]
-
-
-
-conformModelToState : HistoryState -> Model -> Model
-conformModelToState state model =
+conformWindowToState: HistoryState -> Model -> Cmd Msg
+conformWindowToState state model =
     let
-        openModals =
-            case state.modal of
-                Nothing ->
-                    []
-
-                Just modalInfo ->
-                    if List.member modalInfo model.openModals
-                        then
-                            model.openModals
-                        else
-                            modalInfo :: model.openModals
+        modalsToOpen = state.openModals `missingIn` model.openModals
+        modalsToClose = model.openModals `missingIn` state.openModals
     in
-        { model | openModals = openModals }
+        [ List.map Modal.open modalsToOpen
+        , List.map Modal.close modalsToClose
+        , [ History.replaceState (Debug.log "popped historyState: " state) ]
+        ]
+            |> List.concat
+            |> Cmd.batch
+
+
+
+missingIn : List a -> List a -> List a
+missingIn a b =
+    List.filter (\x -> List.member x b |> not) a
 
 
 
 -- This does not trigger a popstate
-createState: Maybe Modal -> Maybe String -> Cmd msg
-createState modal url =
+createState: List Modal -> Maybe String -> Cmd msg
+createState openModals pageUrl =
     let
+        firstModalUrl =
+            ( List.head openModals ) `Maybe.andThen` (\x -> x.targetUrl)
         stateUrl =
-            [ modal `Maybe.andThen` (\x -> x.targetUrl)
-            , url
-            ]
+            [ firstModalUrl, pageUrl ]
                 |> Maybe.oneOf
                 |> Maybe.withDefault placeholderUrl
     in
-        History.pushState ( HistoryState modal stateUrl )
+        History.pushState ( HistoryState openModals stateUrl )
 
 
 
-setCurrentState: Maybe Modal -> String -> Cmd msg
-setCurrentState modal url =
-  History.replaceState ( HistoryState modal url )
+setCurrentState: List Modal -> String -> Cmd msg
+setCurrentState openModals url =
+  History.replaceState ( HistoryState openModals url )
