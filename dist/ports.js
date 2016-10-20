@@ -9,13 +9,22 @@ const {
   onModalClose,
 } = app.ports;
 
-const ModalInfo = function (modalSelector, targetUrl) {
-  return modalSelector ? { modalSelector, targetUrl } : null;
+const Modal = function (selector, targetUrl) {
+  return selector ? { selector, targetUrl } : null;
 };
 
+const HistoryState = function ({ url, selector, targetUrl } = {}) {
+  return url
+    ? { url, modal: Modal(selector, targetUrl) }
+    : null;
+};
 
 window.addEventListener('popstate', (e) => {
-  onPopState.send(e.state);
+  const newState = e.state;
+  const histState = newState
+    ? new HistoryState(newState, 'moda-router-state', newState.url)
+    : null;
+  onPopState.send(histState);
 });
 
 function getModalInfo(e) {
@@ -24,9 +33,10 @@ function getModalInfo(e) {
       : null;
 
   const modalSelector = `#${e.target.id}`;
-  const modalInfo = ModalInfo(modalSelector, targetUrl);
+  const modalInfo = Modal(modalSelector, targetUrl);
   return modalInfo;
 }
+
 $(document.body)
   .on('show.bs.modal', (e) => onModalOpen.send(getModalInfo(e)))
   .on('hide.bs.modal', (e) => onModalClose.send(getModalInfo(e)));

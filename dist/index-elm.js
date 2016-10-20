@@ -3767,6 +3767,239 @@ var _elm_lang$core$Result$fromMaybe = F2(
 		}
 	});
 
+var _elm_lang$core$Task$onError = _elm_lang$core$Native_Scheduler.onError;
+var _elm_lang$core$Task$andThen = _elm_lang$core$Native_Scheduler.andThen;
+var _elm_lang$core$Task$spawnCmd = F2(
+	function (router, _p0) {
+		var _p1 = _p0;
+		return _elm_lang$core$Native_Scheduler.spawn(
+			A2(
+				_elm_lang$core$Task$andThen,
+				_p1._0,
+				_elm_lang$core$Platform$sendToApp(router)));
+	});
+var _elm_lang$core$Task$fail = _elm_lang$core$Native_Scheduler.fail;
+var _elm_lang$core$Task$mapError = F2(
+	function (f, task) {
+		return A2(
+			_elm_lang$core$Task$onError,
+			task,
+			function (err) {
+				return _elm_lang$core$Task$fail(
+					f(err));
+			});
+	});
+var _elm_lang$core$Task$succeed = _elm_lang$core$Native_Scheduler.succeed;
+var _elm_lang$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskA,
+			function (a) {
+				return _elm_lang$core$Task$succeed(
+					func(a));
+			});
+	});
+var _elm_lang$core$Task$map2 = F3(
+	function (func, taskA, taskB) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskA,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					taskB,
+					function (b) {
+						return _elm_lang$core$Task$succeed(
+							A2(func, a, b));
+					});
+			});
+	});
+var _elm_lang$core$Task$map3 = F4(
+	function (func, taskA, taskB, taskC) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskA,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					taskB,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							taskC,
+							function (c) {
+								return _elm_lang$core$Task$succeed(
+									A3(func, a, b, c));
+							});
+					});
+			});
+	});
+var _elm_lang$core$Task$map4 = F5(
+	function (func, taskA, taskB, taskC, taskD) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskA,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					taskB,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							taskC,
+							function (c) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									taskD,
+									function (d) {
+										return _elm_lang$core$Task$succeed(
+											A4(func, a, b, c, d));
+									});
+							});
+					});
+			});
+	});
+var _elm_lang$core$Task$map5 = F6(
+	function (func, taskA, taskB, taskC, taskD, taskE) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskA,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					taskB,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							taskC,
+							function (c) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									taskD,
+									function (d) {
+										return A2(
+											_elm_lang$core$Task$andThen,
+											taskE,
+											function (e) {
+												return _elm_lang$core$Task$succeed(
+													A5(func, a, b, c, d, e));
+											});
+									});
+							});
+					});
+			});
+	});
+var _elm_lang$core$Task$andMap = F2(
+	function (taskFunc, taskValue) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskFunc,
+			function (func) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					taskValue,
+					function (value) {
+						return _elm_lang$core$Task$succeed(
+							func(value));
+					});
+			});
+	});
+var _elm_lang$core$Task$sequence = function (tasks) {
+	var _p2 = tasks;
+	if (_p2.ctor === '[]') {
+		return _elm_lang$core$Task$succeed(
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	} else {
+		return A3(
+			_elm_lang$core$Task$map2,
+			F2(
+				function (x, y) {
+					return A2(_elm_lang$core$List_ops['::'], x, y);
+				}),
+			_p2._0,
+			_elm_lang$core$Task$sequence(_p2._1));
+	}
+};
+var _elm_lang$core$Task$onEffects = F3(
+	function (router, commands, state) {
+		return A2(
+			_elm_lang$core$Task$map,
+			function (_p3) {
+				return {ctor: '_Tuple0'};
+			},
+			_elm_lang$core$Task$sequence(
+				A2(
+					_elm_lang$core$List$map,
+					_elm_lang$core$Task$spawnCmd(router),
+					commands)));
+	});
+var _elm_lang$core$Task$toMaybe = function (task) {
+	return A2(
+		_elm_lang$core$Task$onError,
+		A2(_elm_lang$core$Task$map, _elm_lang$core$Maybe$Just, task),
+		function (_p4) {
+			return _elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing);
+		});
+};
+var _elm_lang$core$Task$fromMaybe = F2(
+	function ($default, maybe) {
+		var _p5 = maybe;
+		if (_p5.ctor === 'Just') {
+			return _elm_lang$core$Task$succeed(_p5._0);
+		} else {
+			return _elm_lang$core$Task$fail($default);
+		}
+	});
+var _elm_lang$core$Task$toResult = function (task) {
+	return A2(
+		_elm_lang$core$Task$onError,
+		A2(_elm_lang$core$Task$map, _elm_lang$core$Result$Ok, task),
+		function (msg) {
+			return _elm_lang$core$Task$succeed(
+				_elm_lang$core$Result$Err(msg));
+		});
+};
+var _elm_lang$core$Task$fromResult = function (result) {
+	var _p6 = result;
+	if (_p6.ctor === 'Ok') {
+		return _elm_lang$core$Task$succeed(_p6._0);
+	} else {
+		return _elm_lang$core$Task$fail(_p6._0);
+	}
+};
+var _elm_lang$core$Task$init = _elm_lang$core$Task$succeed(
+	{ctor: '_Tuple0'});
+var _elm_lang$core$Task$onSelfMsg = F3(
+	function (_p9, _p8, _p7) {
+		return _elm_lang$core$Task$succeed(
+			{ctor: '_Tuple0'});
+	});
+var _elm_lang$core$Task$command = _elm_lang$core$Native_Platform.leaf('Task');
+var _elm_lang$core$Task$T = function (a) {
+	return {ctor: 'T', _0: a};
+};
+var _elm_lang$core$Task$perform = F3(
+	function (onFail, onSuccess, task) {
+		return _elm_lang$core$Task$command(
+			_elm_lang$core$Task$T(
+				A2(
+					_elm_lang$core$Task$onError,
+					A2(_elm_lang$core$Task$map, onSuccess, task),
+					function (x) {
+						return _elm_lang$core$Task$succeed(
+							onFail(x));
+					})));
+	});
+var _elm_lang$core$Task$cmdMap = F2(
+	function (tagger, _p10) {
+		var _p11 = _p10;
+		return _elm_lang$core$Task$T(
+			A2(_elm_lang$core$Task$map, tagger, _p11._0));
+	});
+_elm_lang$core$Native_Platform.effectManagers['Task'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Task$init, onEffects: _elm_lang$core$Task$onEffects, onSelfMsg: _elm_lang$core$Task$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Task$cmdMap};
+
 //import Native.Utils //
 
 var _elm_lang$core$Native_Debug = function() {
@@ -7444,44 +7677,30 @@ var _elm_lang$html$Html_App$beginnerProgram = function (_p1) {
 };
 var _elm_lang$html$Html_App$map = _elm_lang$virtual_dom$VirtualDom$map;
 
-var _user$project$ModalRouter_Types$ModalInfo = F2(
-	function (a, b) {
-		return {modalSelector: a, targetUrl: b};
-	});
-var _user$project$ModalRouter_Types$HistoryState = F2(
-	function (a, b) {
-		return {modal: a, url: b};
-	});
-var _user$project$ModalRouter_Types$Model = function (a) {
-	return {openModals: a};
-};
-var _user$project$ModalRouter_Types$ModalClose = function (a) {
-	return {ctor: 'ModalClose', _0: a};
-};
-var _user$project$ModalRouter_Types$ModalOpen = function (a) {
-	return {ctor: 'ModalOpen', _0: a};
-};
-var _user$project$ModalRouter_Types$PopState = function (a) {
-	return {ctor: 'PopState', _0: a};
-};
-
 /* globals Elm */
 /* eslint-disable new-cap */
 
-const ModalInfo = function (modalSelector, targetUrl) {
-  return modalSelector ? { modalSelector, targetUrl } : null;
+const Modal = function (selector, targetUrl) {
+  return selector ? { selector, targetUrl } : null;
 };
 
-const HistoryState = function ({ url, modalSelector, targetUrl } = {}) {
+const HistoryState = function ({ url, selector, targetUrl } = {}) {
   return url
-    ? { url, modalInfo: ModalInfo(modalSelector, targetUrl) }
+    ? { url, modal: Modal(selector, targetUrl) }
     : null;
 };
 
-var _user$project$Native_History = {
-  pushState: (...args) => window.history.pushState(...args),
-  replaceState: (...args) => window.history.replaceState(...args),
-  getState: () => HistoryState(window.history.state),
+const _user$project$Native_History = {
+  pushState: (state) => window.history.pushState(state, 'modal-router-state', state.url),
+  replaceState: (state) => window.history.replaceState(state, 'modal-router-state', state.url),
+  getState: () => {
+    const windowState = window.history.state;
+    const histState = windowState
+      ? new HistoryState(windowState.url, windowState.selector, windowState.targetUrl)
+      : null;
+
+    return histState;
+  },
 };
 
 /* global $*/
@@ -7499,10 +7718,65 @@ var _user$project$Native_Modal = {
   },
 };
 
+var _user$project$Modal$getOpen = function (a) {
+	return _user$project$Native_Modal.getOpen(a);
+};
+var _user$project$Modal$close = function (modal) {
+	return _user$project$Native_Modal.close(modal.selector);
+};
+var _user$project$Modal$open = function (modal) {
+	return _user$project$Native_Modal.open(modal.selector);
+};
+var _user$project$Modal$Modal = F2(
+	function (a, b) {
+		return {selector: a, targetUrl: b};
+	});
+
+var _user$project$Native_Uri = {
+  encodeUri: encodeURI,
+  encodeUriComponent: encodeURIComponent
+};
+
+var _user$project$Uri$encodeUriComponent = function (str) {
+	return _user$project$Native_Uri.encodeUriComponent(str);
+};
+var _user$project$Uri$encodeUri = function (str) {
+	return _user$project$Native_Uri.encodeUri(str);
+};
+
+var _user$project$History$getState = function (a) {
+	return _user$project$Native_History.getState(a);
+};
+var _user$project$History$replaceState = function (hist) {
+	var a = _user$project$Native_History.replaceState(hist);
+	return _elm_lang$core$Platform_Cmd$none;
+};
+var _user$project$History$pushState = function (hist) {
+	var a = _user$project$Native_History.pushState(hist);
+	return _elm_lang$core$Platform_Cmd$none;
+};
+var _user$project$History$HistoryState = F2(
+	function (a, b) {
+		return {modal: a, url: b};
+	});
+
+var _user$project$ModalRouter_Types$Model = function (a) {
+	return {openModals: a};
+};
+var _user$project$ModalRouter_Types$ModalClose = function (a) {
+	return {ctor: 'ModalClose', _0: a};
+};
+var _user$project$ModalRouter_Types$ModalOpen = function (a) {
+	return {ctor: 'ModalOpen', _0: a};
+};
+var _user$project$ModalRouter_Types$PopState = function (a) {
+	return {ctor: 'PopState', _0: a};
+};
+
 var _user$project$ModalRouter_State$setCurrentState = F2(
 	function (modal, url) {
-		return _user$project$Native_History.replaceState(
-			A2(_user$project$ModalRouter_Types$HistoryState, modal, url));
+		return _user$project$History$replaceState(
+			A2(_user$project$History$HistoryState, modal, url));
 	});
 var _user$project$ModalRouter_State$modalUrlToPageUrl = function (modalUrl) {
 	return modalUrl;
@@ -7511,13 +7785,13 @@ var _user$project$ModalRouter_State$applyState = function (state) {
 	return _elm_lang$core$Platform_Cmd$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				A3(_user$project$Native_History.replaceState, state, state.url, state.url),
+				_user$project$History$replaceState(state),
 				function () {
 				var _p0 = state.modal;
 				if (_p0.ctor === 'Nothing') {
 					return _elm_lang$core$Platform_Cmd$none;
 				} else {
-					return _user$project$Native_Modal.open(_p0._0.modalSelector);
+					return _user$project$Modal$open(_p0._0);
 				}
 			}()
 			]));
@@ -7546,8 +7820,8 @@ var _user$project$ModalRouter_State$createState = F2(
 						}),
 						url
 					])));
-		return _user$project$Native_History.pushState(
-			A2(_user$project$ModalRouter_Types$HistoryState, modal, stateUrl));
+		return _user$project$History$pushState(
+			A2(_user$project$History$HistoryState, modal, stateUrl));
 	});
 var _user$project$ModalRouter_State$update = F2(
 	function (msg, model) {
@@ -7628,8 +7902,8 @@ var _user$project$ModalRouter_State$onPopState = _elm_lang$core$Native_Platform.
 									_elm_lang$core$Maybe$Just,
 									A2(
 										_elm_lang$core$Json_Decode$andThen,
-										A2(_elm_lang$core$Json_Decode_ops[':='], 'modalSelector', _elm_lang$core$Json_Decode$string),
-										function (modalSelector) {
+										A2(_elm_lang$core$Json_Decode_ops[':='], 'selector', _elm_lang$core$Json_Decode$string),
+										function (selector) {
 											return A2(
 												_elm_lang$core$Json_Decode$andThen,
 												A2(
@@ -7643,7 +7917,7 @@ var _user$project$ModalRouter_State$onPopState = _elm_lang$core$Native_Platform.
 															]))),
 												function (targetUrl) {
 													return _elm_lang$core$Json_Decode$succeed(
-														{modalSelector: modalSelector, targetUrl: targetUrl});
+														{selector: selector, targetUrl: targetUrl});
 												});
 										}))
 								]))),
@@ -7661,8 +7935,8 @@ var _user$project$ModalRouter_State$onModalOpen = _elm_lang$core$Native_Platform
 	'onModalOpen',
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'modalSelector', _elm_lang$core$Json_Decode$string),
-		function (modalSelector) {
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'selector', _elm_lang$core$Json_Decode$string),
+		function (selector) {
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
 				A2(
@@ -7676,15 +7950,15 @@ var _user$project$ModalRouter_State$onModalOpen = _elm_lang$core$Native_Platform
 							]))),
 				function (targetUrl) {
 					return _elm_lang$core$Json_Decode$succeed(
-						{modalSelector: modalSelector, targetUrl: targetUrl});
+						{selector: selector, targetUrl: targetUrl});
 				});
 		}));
 var _user$project$ModalRouter_State$onModalClose = _elm_lang$core$Native_Platform.incomingPort(
 	'onModalClose',
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'modalSelector', _elm_lang$core$Json_Decode$string),
-		function (modalSelector) {
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'selector', _elm_lang$core$Json_Decode$string),
+		function (selector) {
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
 				A2(
@@ -7698,7 +7972,7 @@ var _user$project$ModalRouter_State$onModalClose = _elm_lang$core$Native_Platfor
 							]))),
 				function (targetUrl) {
 					return _elm_lang$core$Json_Decode$succeed(
-						{modalSelector: modalSelector, targetUrl: targetUrl});
+						{selector: selector, targetUrl: targetUrl});
 				});
 		}));
 var _user$project$ModalRouter_State$subscriptions = function (model) {

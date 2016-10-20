@@ -1,0 +1,15 @@
+var _user$project$History$getState = function (a) {
+	return _user$project$Native_History.getState(a);
+};
+var _user$project$History$replaceState = function (hist) {
+	var a = _user$project$Native_History.replaceState(hist);
+	return _elm_lang$core$Platform_Cmd$none;
+};
+var _user$project$History$pushState = function (hist) {
+	var a = _user$project$Native_History.pushState(hist);
+	return _elm_lang$core$Platform_Cmd$none;
+};
+var _user$project$History$HistoryState = F2(
+	function (a, b) {
+		return {modal: a, url: b};
+	});

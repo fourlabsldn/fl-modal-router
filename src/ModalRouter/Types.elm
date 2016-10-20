@@ -1,28 +1,17 @@
 module ModalRouter.Types exposing (..)
 
+import Modal exposing ( Modal )
+import History exposing ( HistoryState )
+
 
 
 type Msg
     = PopState (Maybe HistoryState)
-    | ModalOpen ModalInfo
-    | ModalClose ModalInfo -- this string is just to comply with the subscription of onModalClose
-
-
-
-type alias ModalInfo =
-    { modalSelector: String
-    , targetUrl: Maybe String
-    }
-
-
-
-type alias HistoryState =
-    { modal: Maybe ModalInfo
-    , url: String
-    }
+    | ModalOpen Modal
+    | ModalClose Modal -- this string is just to comply with the subscription of onModalClose
 
 
 
 type alias Model =
-    { openModals: List ModalInfo
+    { openModals: List Modal
     }

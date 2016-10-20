@@ -3,24 +3,32 @@ module History exposing (..)
 import Native.History
 
 import Modal
-
+import Uri exposing ( Uri )
+import Task exposing (Task)
 
 
 type alias HistoryState =
-    { modal: Maybe Modal.ModalInfo
-    , url: String
+    { modal: Maybe Modal.Modal
+    , url: Uri
     }
+
 
 
 pushState : HistoryState -> Cmd msg
 pushState hist =
-    Native.History.pushState hist "modal-router-state" hist.url
+    let
+        a = Native.History.pushState hist
+    in
+        Cmd.none
 
 
 
 replaceState : HistoryState -> Cmd msg
 replaceState hist =
-    Native.History.replaceState hist "modal-router-state" hist.url
+    let
+        a = Native.History.replaceState hist
+    in
+        Cmd.none
 
 
 

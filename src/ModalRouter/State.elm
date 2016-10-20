@@ -2,8 +2,9 @@ port module ModalRouter.State exposing (init, update, subscriptions)
 
 import ModalRouter.Types exposing (..)
 import String
-import Native.History
-import Native.Modal
+import History exposing ( HistoryState )
+import Modal exposing ( Modal )
+import Uri exposing ( Uri )
 import Maybe
 
 
@@ -24,8 +25,8 @@ init =
 
 
 port onPopState : (Maybe HistoryState -> msg) -> Sub msg
-port onModalOpen : (ModalInfo -> msg) -> Sub msg
-port onModalClose : (ModalInfo -> msg) -> Sub msg
+port onModalOpen : (Modal -> msg) -> Sub msg
+port onModalClose : (Modal -> msg) -> Sub msg
 
 
 
@@ -89,13 +90,13 @@ update msg model =
 applyState: HistoryState -> Cmd Msg
 applyState state =
   Cmd.batch
-    [ Native.History.replaceState state state.url state.url
+    [ History.replaceState state
     , case state.modal of
         Nothing ->
           Cmd.none
 
         Just modal ->
-          Native.Modal.open modal.modalSelector
+          Modal.open modal
     ]
 
 
@@ -106,7 +107,7 @@ modalUrlToPageUrl modalUrl = modalUrl
 
 
 -- This does not trigger a popstate
-createState: Maybe ModalInfo -> Maybe String -> Cmd msg
+createState: Maybe Modal -> Maybe String -> Cmd msg
 createState modal url =
     let
         stateUrl =
@@ -116,10 +117,10 @@ createState modal url =
                 |> Maybe.oneOf
                 |> Maybe.withDefault placeholderUrl
     in
-        Native.History.pushState ( HistoryState modal stateUrl )
+        History.pushState ( HistoryState modal stateUrl )
 
 
 
-setCurrentState: Maybe ModalInfo -> String -> Cmd msg
+setCurrentState: Maybe Modal -> String -> Cmd msg
 setCurrentState modal url =
-  Native.History.replaceState ( HistoryState modal url )
+  History.replaceState ( HistoryState modal url )

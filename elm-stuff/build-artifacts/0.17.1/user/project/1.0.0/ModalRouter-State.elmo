@@ -1,7 +1,7 @@
 var _user$project$ModalRouter_State$setCurrentState = F2(
 	function (modal, url) {
-		return _user$project$Native_History.replaceState(
-			A2(_user$project$ModalRouter_Types$HistoryState, modal, url));
+		return _user$project$History$replaceState(
+			A2(_user$project$History$HistoryState, modal, url));
 	});
 var _user$project$ModalRouter_State$modalUrlToPageUrl = function (modalUrl) {
 	return modalUrl;
@@ -10,13 +10,13 @@ var _user$project$ModalRouter_State$applyState = function (state) {
 	return _elm_lang$core$Platform_Cmd$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				A3(_user$project$Native_History.replaceState, state, state.url, state.url),
+				_user$project$History$replaceState(state),
 				function () {
 				var _p0 = state.modal;
 				if (_p0.ctor === 'Nothing') {
 					return _elm_lang$core$Platform_Cmd$none;
 				} else {
-					return _user$project$Native_Modal.open(_p0._0.modalSelector);
+					return _user$project$Modal$open(_p0._0);
 				}
 			}()
 			]));
@@ -45,8 +45,8 @@ var _user$project$ModalRouter_State$createState = F2(
 						}),
 						url
 					])));
-		return _user$project$Native_History.pushState(
-			A2(_user$project$ModalRouter_Types$HistoryState, modal, stateUrl));
+		return _user$project$History$pushState(
+			A2(_user$project$History$HistoryState, modal, stateUrl));
 	});
 var _user$project$ModalRouter_State$update = F2(
 	function (msg, model) {
@@ -127,8 +127,8 @@ var _user$project$ModalRouter_State$onPopState = _elm_lang$core$Native_Platform.
 									_elm_lang$core$Maybe$Just,
 									A2(
 										_elm_lang$core$Json_Decode$andThen,
-										A2(_elm_lang$core$Json_Decode_ops[':='], 'modalSelector', _elm_lang$core$Json_Decode$string),
-										function (modalSelector) {
+										A2(_elm_lang$core$Json_Decode_ops[':='], 'selector', _elm_lang$core$Json_Decode$string),
+										function (selector) {
 											return A2(
 												_elm_lang$core$Json_Decode$andThen,
 												A2(
@@ -142,7 +142,7 @@ var _user$project$ModalRouter_State$onPopState = _elm_lang$core$Native_Platform.
 															]))),
 												function (targetUrl) {
 													return _elm_lang$core$Json_Decode$succeed(
-														{modalSelector: modalSelector, targetUrl: targetUrl});
+														{selector: selector, targetUrl: targetUrl});
 												});
 										}))
 								]))),
@@ -160,8 +160,8 @@ var _user$project$ModalRouter_State$onModalOpen = _elm_lang$core$Native_Platform
 	'onModalOpen',
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'modalSelector', _elm_lang$core$Json_Decode$string),
-		function (modalSelector) {
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'selector', _elm_lang$core$Json_Decode$string),
+		function (selector) {
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
 				A2(
@@ -175,15 +175,15 @@ var _user$project$ModalRouter_State$onModalOpen = _elm_lang$core$Native_Platform
 							]))),
 				function (targetUrl) {
 					return _elm_lang$core$Json_Decode$succeed(
-						{modalSelector: modalSelector, targetUrl: targetUrl});
+						{selector: selector, targetUrl: targetUrl});
 				});
 		}));
 var _user$project$ModalRouter_State$onModalClose = _elm_lang$core$Native_Platform.incomingPort(
 	'onModalClose',
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'modalSelector', _elm_lang$core$Json_Decode$string),
-		function (modalSelector) {
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'selector', _elm_lang$core$Json_Decode$string),
+		function (selector) {
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
 				A2(
@@ -197,7 +197,7 @@ var _user$project$ModalRouter_State$onModalClose = _elm_lang$core$Native_Platfor
 							]))),
 				function (targetUrl) {
 					return _elm_lang$core$Json_Decode$succeed(
-						{modalSelector: modalSelector, targetUrl: targetUrl});
+						{selector: selector, targetUrl: targetUrl});
 				});
 		}));
 var _user$project$ModalRouter_State$subscriptions = function (model) {

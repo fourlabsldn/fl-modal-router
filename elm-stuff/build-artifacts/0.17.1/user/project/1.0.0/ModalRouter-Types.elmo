@@ -1,11 +1,3 @@
-var _user$project$ModalRouter_Types$ModalInfo = F2(
-	function (a, b) {
-		return {modalSelector: a, targetUrl: b};
-	});
-var _user$project$ModalRouter_Types$HistoryState = F2(
-	function (a, b) {
-		return {modal: a, url: b};
-	});
 var _user$project$ModalRouter_Types$Model = function (a) {
 	return {openModals: a};
 };

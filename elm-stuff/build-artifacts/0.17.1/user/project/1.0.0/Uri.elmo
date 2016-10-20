@@ -1,0 +1,6 @@
+var _user$project$Uri$encodeUriComponent = function (str) {
+	return _user$project$Native_Uri.encodeUriComponent(str);
+};
+var _user$project$Uri$encodeUri = function (str) {
+	return _user$project$Native_Uri.encodeUri(str);
+};
