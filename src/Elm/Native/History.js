@@ -1,6 +1,5 @@
-/* globals Elm, $ */
+/* globals Elm */
 /* eslint-disable new-cap, no-underscore-dangle */
-import Elm from './compiled-elm.js';
 
 /**
  * If it's not a Maybe, returns whatever value that is, if it is
@@ -24,17 +23,17 @@ const parseElmList = l => {
     return l;
   }
 
-  let list = [];
-  let counter = 0;
+  let list = []
+  let counter = 0
   let key = `_${counter}`;
   while (l[key] !== undefined && l[key].ctor !== '[]') {
     list = list.concat(l[key]);
-    counter = counter + 1;
+    counter = counter + 1
     key = `_${counter}`;
   }
 
   return list;
-};
+}
 
 /**
  * Creates an Elm acceptable Modal object
@@ -78,44 +77,18 @@ const HistoryState = function (state) {
   return { url, sessionId, openModals: modals };
 };
 
-// =============================================================================
 
-// We will provide a unique id for our app
-const sessionId = Date.now();
-const app = Elm.ModalRouter.fullscreen(sessionId);
+// ============================ ELM NATIVE =====================================
 
-// We send stuff to Elm with suggestions
-const {
-  onPopState,
-  onModalOpen,
-  onModalClose,
-} = app.ports;
 
-window.addEventListener('popstate', (e) => {
-  const histState = HistoryState(e.state);
-  onPopState.send(histState);
-});
-
-function getModalInfo(e) {
-  const targetUrl = e.relatedTarget && e.relatedTarget.getAttribute('href')
-      ? e.relatedTarget.getAttribute('href')
-      : null;
-
-  const selector = `#${e.target.id}`;
-  const modalInfo = Modal({ selector, targetUrl });
-  return modalInfo;
-}
-
-$(document.body)
-  .on('show.bs.modal', (e) => onModalOpen.send(getModalInfo(e)))
-  .on('hide.bs.modal', (e) => {
-    const modal = getModalInfo(e);
-    if (!modal) {
-      throw new Error('Modal close event did not contain a modal. Something is wrong.');
-    }
-    onModalClose.send(modal.selector);
-  });
-
-app.ports.reload.subscribe(() => {
-  window.location.reload();
-});
+const _user$project$Native_History = {
+  pushState: (state) => {
+    const histState = HistoryState(state);
+    window.history.pushState(histState, 'modal-router-state', histState.url)
+  },
+  replaceState: (state) => {
+    const histState = HistoryState(state);
+    window.history.replaceState(histState, 'modal-router-state', histState.url)
+  },
+  getState: () => HistoryState(window.history.state),
+};
