@@ -18,4 +18,9 @@ organiser.registerAll('./tasks', {
     startPath: 'demo/index.html',
     baseDir: './',
   },
+  concat: {
+    src: ['dist/index-elm.js', 'dist/ports.js'],
+    dest: 'dist',
+    fileName: 'fl-modal-router.js',
+  },
 });
