@@ -13,7 +13,7 @@ type alias Modal =
 
 open : Modal -> Cmd a
 open modal =
-    Native.Modal.open modal.selector
+    Native.Modal.open modal
         |> always Cmd.none
 
 

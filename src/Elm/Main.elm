@@ -4,7 +4,7 @@ import ModalRouter.State exposing ( init, update, subscriptions )
 import ModalRouter.Types exposing ( Model, Msg )
 import Html exposing (..)
 import Html.App as App
-
+import Native.Common
 
 
 main =
