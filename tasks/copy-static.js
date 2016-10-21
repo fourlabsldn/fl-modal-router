@@ -7,7 +7,7 @@ module.exports = organiser.register((task, allTasks) => {
   const excludePaths = getExcludedPaths(task, allTasks);
   const folderMapping = task.map || {};
 
-  gulp.task(task.name, () => {
+  gulp.task(task.name, (done) => {
     const mapped = Object.keys(folderMapping);
     const exclude = [...excludePaths, ...mapped];
 
@@ -15,6 +15,10 @@ module.exports = organiser.register((task, allTasks) => {
 
     // Copy mapped folders
     mapped.forEach(p => copy([p], folderMapping[p], excludePaths));
+
+    // Allow some time for the task to complete, otherwise other tasks that depend
+    // on it may not get the files they need
+    setTimeout(done, 500);
   });
 });
 

@@ -8,7 +8,7 @@ module.exports = organiser.register((task) => {
     ext = 'js',
     src,
     dest,
-    moduleName = path.parse(task.src).name,
+    moduleName = task.output || path.parse(task.src).name,
   } = task;
 
   const output = path.join(dest, `${moduleName}.${ext}`);

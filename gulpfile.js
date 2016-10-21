@@ -1,10 +1,14 @@
 // List all available tasks
+const jsPart = 'ports.js';
+const elmPart = 'module.js';
+const output = 'fl-modal-router.js';
+
 const organiser = require('gulp-organiser');
 organiser.registerAll('./tasks', {
   'transpile-to-es5': {
     src: './dist/pre-transpilation.js',
     dest: './dist',
-    rename: 'fl-modal-router.js',
+    rename: output,
     config: {
       moduleName: 'ModalRouter',
     },
@@ -17,8 +21,7 @@ organiser.registerAll('./tasks', {
     watch: 'src/**/*',
     src: 'src/Main.elm',
     dest: 'dist',
-    moduleName: 'ModalRouter',
-    ext: 'js',
+    output: elmPart,
   },
   'browser-sync': {
     src: '.', // it doesn't matter, it's just so the task object is not ignored.
@@ -27,7 +30,7 @@ organiser.registerAll('./tasks', {
     baseDir: './',
   },
   concat: {
-    src: ['dist/ModalRouter.js', 'dist/ports.js'],
+    src: [`./dist/${elmPart}`, `./dist/${jsPart}`],
     dest: 'dist',
     fileName: 'pre-transpilation.js',
   },
