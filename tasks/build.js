@@ -1,10 +1,14 @@
+/* eslint-disable global-require */
+
 const gulp = require('gulp');
 const organiser = require('gulp-organiser');
 
-const buildElm = require('./build-elm').name;
-const copyStatic = require('./copy-static').name;
-const concat = require('./concat').name;
+const buildTasks = [
+  require('./build-elm'),
+  require('./copy-static'),
+  require('./concat'),
+].map(t => t.name);
 
 module.exports = organiser.register((task) => {
-  gulp.task(task.name, [buildElm, copyStatic, concat]);
+  gulp.task(task.name, buildTasks);
 });
