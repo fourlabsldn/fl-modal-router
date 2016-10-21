@@ -2,6 +2,14 @@
 const organiser = require('gulp-organiser');
 organiser.registerAll('./tasks', {
   'transpile-to-es5': {
+    src: './dist/pre-transpilation.js',
+    dest: './dist',
+    rename: 'fl-modal-router.js',
+    config: {
+      moduleName: 'ModalRouter',
+    },
+  },
+  'copy-static': {
     src: './src/*.js',
     dest: './dist',
   },
@@ -9,7 +17,7 @@ organiser.registerAll('./tasks', {
     watch: 'src/**/*',
     src: 'src/Main.elm',
     dest: 'dist',
-    moduleName: 'index-elm',
+    moduleName: 'ModalRouter',
     ext: 'js',
   },
   'browser-sync': {
@@ -19,8 +27,8 @@ organiser.registerAll('./tasks', {
     baseDir: './',
   },
   concat: {
-    src: ['dist/index-elm.js', 'dist/ports.js'],
+    src: ['dist/ModalRouter.js', 'dist/ports.js'],
     dest: 'dist',
-    fileName: 'fl-modal-router.js',
+    fileName: 'pre-transpilation.js',
   },
 });
