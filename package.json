@@ -1,6 +1,6 @@
 {
   "name": "fl-modal-router",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Map URLs to modals",
   "main": "index.js",
   "scripts": {},
