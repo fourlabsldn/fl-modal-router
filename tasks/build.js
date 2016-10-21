@@ -5,7 +5,7 @@ const organiser = require('gulp-organiser');
 
 const buildTasks = [
   require('./build-elm'),
-  require('./copy-static'),
+  require('./transpile-to-es5'),
   require('./concat'),
 ].map(t => t.name);
 

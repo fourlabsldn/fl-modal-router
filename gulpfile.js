@@ -1,7 +1,7 @@
 // List all available tasks
 const organiser = require('gulp-organiser');
 organiser.registerAll('./tasks', {
-  'copy-static': {
+  'transpile-to-es5': {
     src: './src/*.js',
     dest: './dist',
   },
