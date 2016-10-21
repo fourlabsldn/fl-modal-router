@@ -1,26 +1,22 @@
 // List all available tasks
-const jsPart = 'ports.js';
-const elmPart = 'module.js';
+const jsPart = 'main.js';
+const elmPart = 'compiled-elm.js';
 const output = 'fl-modal-router.js';
 
 const organiser = require('gulp-organiser');
 organiser.registerAll('./tasks', {
   'transpile-to-es5': {
-    src: './dist/pre-transpilation.js',
+    src: `./src/${jsPart}`,
     dest: './dist',
     rename: output,
     config: {
       moduleName: 'ModalRouter',
     },
   },
-  'copy-static': {
-    src: './src/*.js',
-    dest: './dist',
-  },
   'build-elm': {
     watch: 'src/**/*',
-    src: 'src/Main.elm',
-    dest: 'dist',
+    src: 'src/Elm/Main.elm',
+    dest: 'src',
     output: elmPart,
   },
   'browser-sync': {
@@ -28,10 +24,5 @@ organiser.registerAll('./tasks', {
     reloadOn: ['build-elm', 'copy-static'],
     startPath: 'demo/index.html',
     baseDir: './',
-  },
-  concat: {
-    src: [`./dist/${elmPart}`, `./dist/${jsPart}`],
-    dest: 'dist',
-    fileName: 'pre-transpilation.js',
   },
 });

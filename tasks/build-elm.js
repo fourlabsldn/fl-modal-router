@@ -5,12 +5,11 @@ const organiser = require('gulp-organiser');
 
 module.exports = organiser.register((task) => {
   const {
-    ext = 'js',
     src,
     dest,
-    moduleName = task.output || path.parse(task.src).name,
+    outputFile = task.output || path.parse(task.src).name + '.js',
   } = task;
 
-  const output = path.join(dest, `${moduleName}.${ext}`);
+  const output = path.join(dest, outputFile);
   gulp.task(task.name, shell.task(`elm-make ${src} --output=${output}`));
 });

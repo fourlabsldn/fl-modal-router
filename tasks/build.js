@@ -6,8 +6,6 @@ const runSequence = require('run-sequence');
 
 const buildTasks = [
   require('./build-elm'),
-  require('./copy-static'),
-  require('./concat'),
   require('./transpile-to-es5'),
 ].map(t => t.name);
 
