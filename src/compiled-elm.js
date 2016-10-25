@@ -7769,8 +7769,7 @@ var _user$project$History$pushState = function (hist) {
 	return A2(
 		_elm_lang$core$Basics$always,
 		_elm_lang$core$Platform_Cmd$none,
-		_user$project$Native_History.pushState(
-			A2(_elm_lang$core$Debug$log, 'Pushing history: ', hist)));
+		_user$project$Native_History.pushState(hist));
 };
 var _user$project$History$HistoryState = F3(
 	function (a, b, c) {

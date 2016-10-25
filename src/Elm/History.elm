@@ -17,7 +17,7 @@ type alias HistoryState =
 
 pushState : HistoryState -> Cmd msg
 pushState hist =
-    Native.History.pushState (Debug.log "Pushing history: " hist)
+    Native.History.pushState hist
         |> always Cmd.none
 
 
