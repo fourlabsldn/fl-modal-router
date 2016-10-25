@@ -7742,7 +7742,7 @@ var _user$project$Modal$Modal = F2(
 var _user$project$Native_Uri = {
   encodeUri: encodeURI,
   encodeUriComponent: encodeURIComponent,
-  getCurrent: () => window.location.pathname,
+  getCurrent: () => window.location.href,
 };
 
 var _user$project$Uri$getCurrent = function (a) {
