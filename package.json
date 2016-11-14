@@ -3,7 +3,9 @@
   "version": "0.1.2",
   "description": "Map URLs to modals",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test" : "echo 'No tests specified' && exit 0"
+  },
   "author": "lazamar @ FourLabs",
   "license": "ISC",
   "devDependencies": {
