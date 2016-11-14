@@ -33,10 +33,3 @@ npm run dev
 ```
 npm run demo
 ```
-
-
-# Install
-## Bower
-```
-bower install fl-modal-router --save
-```
